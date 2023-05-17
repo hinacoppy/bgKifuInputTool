@@ -1,0 +1,165 @@
+/**
+  KifuInputTool.css
+  designed by hinacoppy 2023
+*/
+
+/* document outline ----------------------------------------- */
+*{
+  user-select:none; /* タップ、ドラッグで文字選択しないように */
+}
+
+html{
+  height: 100%;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  height: 100%;
+}
+
+input{
+  font-size:100%;
+}
+
+.container{
+  background: #efe;
+  display: grid; /* Grid Layout でコンテンツを配置 */
+  grid-template-columns: 70vw auto;
+  grid-template-rows: auto auto; /*max-content auto;*/
+  grid-template-areas:
+     'header header'
+     'board  nav';
+  position:relative;
+}
+
+.header{
+  grid-area: header;
+  text-align: center;
+  font-size: 2vw;
+  font-weight: bold;
+}
+
+.mainarea{
+  grid-area: board;
+  margin: 1vh auto; /* 上寄せ、左右中央配置 */
+}
+
+.mainareaflex{
+  display: flex;
+  flex-direction: column; /* toggle column, column-reverse */
+}
+
+.nav{
+  grid-area: nav;
+}
+
+/* Constant definision for bgBoard.css ------------------------------ */
+:root{
+  --boardHeightNum: 70;
+  --boardWidthNum: 45;
+  --pointWidthNum: 3;
+  --cubeSizeNum: 2.7;
+  --frameSizeNum: 1.3;
+  --offtrayMarginNum: 5;
+  --offtrayHeightNum: 70; /* bgBoardApp=49, other=boardHeightNum */
+  --cubeFontSizeNum: 2;
+  --labelFontSizeNum: 0.8;
+  --stackFontSizeNum: 1.5;
+}
+
+
+.pagetitle{
+  font-weight: bold;
+  font-size: 120%;
+  padding-top: 0.5vh;
+  margin-bottom: 1vh;
+}
+
+.info{
+  display: table;
+  width: 100%;
+}
+.playername{
+  display: table-cell;
+  text-align: left;
+  width: 33%;
+}
+.pip{
+  display: table-cell;
+  text-align: center;
+  width: 34%;
+}
+.score{
+  display: table-cell;
+  text-align: right;
+  width: 33%;
+}
+
+.infodisp{
+  font-weight: bold;
+  margin-bottom: 1vh;
+}
+
+.navbutton{
+/*  width: 20vw;*/
+  height: 6vh;
+  font-size:120%;
+  text-align:left;
+}
+
+#matchlength {
+  width: 3em;
+}
+
+.panel{
+  position:absolute;
+  z-index:50;
+/*  display:none;*/
+}
+
+/* oparation button decorations ------------------------------------- */
+.oparationbtn{
+  --bg-color:#bef;
+  --fg-color:#27f;
+  color:var(--fg-color);
+  border:3px solid var(--fg-color);
+  background-color:var(--bg-color);
+  border-radius:20px;
+  padding:2vh 1.5vw;
+  font-size:150%;
+  white-space:nowrap;
+}
+.oparationbtn:disabled {
+  --bg-color:#bbb;
+  --fg-color:#555;
+  color:var(--fg-color);
+  border-color:var(--fg-color);
+  background-color:var(--bg-color);
+}
+
+.pickdice{
+  font-size: 2em;
+  white-space: nowrap;
+}
+#openingroll{
+  font-size: 2em;
+  color: white;
+}
+.turn1{
+}
+.turn2{
+}
+.solid{
+  background-color: #bbb;
+  padding: 2vh 2vw;
+  border: 4px solid #777;
+  width: 100%;
+}
+.gameend{
+  background-color: #eee;
+  color: #000;
+  padding: 2vh 2vw;
+  border: 4px solid #777;
+}
