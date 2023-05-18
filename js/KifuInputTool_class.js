@@ -27,7 +27,6 @@ class KifuInputTool {
     this.animDelay = 800;
     this.gameFinished = true;
     this.flashflg = true;
-    this.outerDragFlag = false; //駒でない部分をタップしてドラッグを始めたら true
 
     this.setDomNames();
     this.setEventHandler();
@@ -55,7 +54,6 @@ class KifuInputTool {
     this.rewindbtn     = $("#rewindbtn");
     this.downloadbtn   = $("#downloadbtn");
     this.allowillegal  = $("#allowillegal");
-    this.pointTriangle = $(".point");
 
     //infos
     this.site       = $("#site");
@@ -103,9 +101,8 @@ class KifuInputTool {
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.matchlen2.text(this.matchlen.val()); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.flashflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on('click', (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
-//    this.pointTriangle. on('mousedown', (e) => { e.preventDefault(); this.pointTouchStartAction(e); });
     $(window).          on('resize', (e) => { e.preventDefault(); this.board.redraw(); });
-    $(document).        on('keydown', (e) => {  /*e.preventDefault();*/ this.keyInputAction(e.key); });
+    $(document).        on('keydown', (e) => { this.keyInputAction(e.key); });
 
     //モーダルウィンドウを準備
     this.panelWindow = new FloatWindow({
@@ -148,9 +145,7 @@ class KifuInputTool {
   }
 
   beginNewGame(newmatch = false) {
-//    const initpos = "-b----E-C---eE---c-e----B-";
-    const initpos = "-BBBCCC-----------cccbbb--";
-
+    const initpos = "-b----E-C---eE---c-e----B-";
     this.xgid.initialize(initpos, newmatch, this.matchLength);
     this.board.showBoard2(this.xgid);
     this.showPipInfo();
@@ -294,7 +289,6 @@ class KifuInputTool {
   }
 
   rewindAction() {
-console.log("rewindAction", this.kifuobj.peepKifuXgid()); //★
     if (!this.kifuobj.peepKifuXgid()) { return; } //rewindで戻せるのは空行で区切られたゲーム境界まで
     const lastxgid = this.kifuobj.popKifuXgid();
     this.xgid = new Xgid(lastxgid);
@@ -312,8 +306,8 @@ console.log("rewindAction", this.kifuobj.peepKifuXgid()); //★
   }
 
   keyInputAction(key) {
-console.log("keyInputAction", key, this.rolldoubleflag, this.keyBuffer); //★
-    if (this.rolldoubleflag) { //ダイスロール時は、123456dを受け付ける
+    switch(this.panelshowing) {
+    case "rolldouble": //ダイスロール時は、123456dを受け付ける
       if (["1", "2", "3", "4", "5", "6"].includes(key)) {
         this.keyBuffer += key;
         if (this.keyBuffer.length == 2) {
@@ -324,12 +318,23 @@ console.log("keyInputAction", key, this.rolldoubleflag, this.keyBuffer); //★
       } else {
         this.keyBuffer = ""; //それ以外のキーが押されたらバッファをクリア
       }
-    } else if(this.doneundoflag) { //done undo時は、Enter, Space, Escを受け付ける
+      break;
+    case "doneundo": //done undo時は、Enter, Space, Escを受け付ける
       if (key == "Enter" || key == " ") {
         this.doneAction();
       } else if (key == "Escape") {
         this.undoAction();
       }
+      break;
+    case "takedrop": //take dropは、t p を受け付ける
+      if (key == "t") {
+        this.takeAction();
+      } else if (key == "p") {
+        this.dropAction();
+      }
+      break;
+    default:
+      break;
     }
   }
 
@@ -366,6 +371,7 @@ console.log("keyInputAction", key, this.rolldoubleflag, this.keyBuffer); //★
 
   showTakeDropPanel(player) {
     this.showElement(this.takedrop);
+    this.panelshowing = "takedrop";
   }
 
   showRollDoublePanel(player, openroll = false) {
@@ -380,13 +386,13 @@ console.log("keyInputAction", key, this.rolldoubleflag, this.keyBuffer); //★
     this.rolldouble.css("background-color", bgcol);
     this.showElement(this.rolldouble);
     this.keyBuffer = "";
-    this.rolldoubleflag = true;
+    this.panelshowing = "rolldouble";
   }
 
   showDoneUndoPanel(player, opening = false) {
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
     this.showElement(this.doneundo);
-    this.doneundoflag = true;
+    this.panelshowing = "doneundo";
   }
 
   makeGameEndPanal(player) {
@@ -414,8 +420,7 @@ console.log("keyInputAction", key, this.rolldoubleflag, this.keyBuffer); //★
   hideAllPanel() {
     this.allpanel.hide();
     this.panelWindow.max();
-    this.rolldoubleflag = false;
-    this.doneundoflag = false;
+    this.panelshowing = "none";
   }
 
   showElement(elem) {
@@ -424,7 +429,6 @@ console.log("keyInputAction", key, this.rolldoubleflag, this.keyBuffer); //★
     const height = elem.outerHeight(true);
     this.panelholder.css("width", width).css("height", height+35);
     $("#panelBody").css("padding", 0);
-console.log("showElement", width, height, elem.outerWidth(true), elem.outerHeight(true), elem.attr("id"));
   }
 
   pushXgidPosition() {
@@ -545,8 +549,6 @@ console.log("showElement", width, height, elem.outerWidth(true), elem.outerHeigh
     this.dragObject = $(event.currentTarget); //dragStopAction()で使うがここで取り出しておかなければならない
     const id = event.currentTarget.id;
     this.dragStartPt = this.board.getDragStartPoint(id, BgUtil.cvtTurnGm2Bd(this.player));
-    if (!this.outerDragFlag) { this.dragStartPos = ui.position; }
-    this.outerDragFlag = false;
     this.flashOnMovablePoint(this.dragStartPt);
   }
 
@@ -558,7 +560,6 @@ console.log("showElement", width, height, elem.outerWidth(true), elem.outerHeigh
       //同じ位置にドロップ(＝クリック)したときは、ダイスの目を使ったマスに動かす
       //known bug:目を余らせて動かしたときに、次のコマがクリックで動かせないことがある
       //ex. ベアオフで、54の目で4ptを先にクリックでベアオフすると、5ptのコマはクリックでベアオフできない
-console.log("checkDragEndPt", dragstartpt, dragendpt, this.dicelist);
       for (let i = 0; i < this.dicelist.length; i++) {
         const endptwk = Math.max(dragstartpt - this.dicelist[i], 0);
         if (xg.isMovable(dragstartpt, endptwk)) {
@@ -654,38 +655,6 @@ console.log("checkDragEndPt", dragstartpt, dragendpt, this.dicelist);
 
   flashOffMovablePoint() {
     this.board.flashOffMovablePoint();
-  }
-
-  ZZZpointTouchStartAction(origevt) {
-    const id = origevt.currentTarget.id;
-    const pt = parseInt(id.substring(2));
-    const chker = this.board.getChequerOnDragging(pt, BgUtil.cvtTurnGm2Bd(this.player));
-    const evttypeflg = (origevt.type === "mousedown")
-    const event = (evttypeflg) ? origevt : origevt.changedTouches[0];
-
-    if (chker) { //chker may be undefined
-      const chkerdom = chker.dom;
-      if (chkerdom.hasClass("draggable")) {
-        this.outerDragFlag = true;
-        this.dragStartPos = {left: chkerdom[0].style.left,
-                             top:  chkerdom[0].style.top };
-        chkerdom.css({left: event.clientX - 30,
-                      top:  event.clientY - 30});
-        let delegateEvent;
-        if (evttypeflg) {
-          delegateEvent = new MouseEvent("mousedown", {clientX:event.clientX, clientY:event.clientY});
-        } else {
-          const touchobj = new Touch({identifier: 12345,
-                                      target: chkerdom[0],
-                                      clientX: event.clientX,
-                                      clientY: event.clientY,
-                                      pageX: event.pageX,
-                                      pageY: event.pageY});
-          delegateEvent = new TouchEvent("touchstart", {changedTouches:[touchobj]});
-        }
-        chkerdom[0].dispatchEvent(delegateEvent);
-      }
-    }
   }
 
 }
