@@ -44,6 +44,7 @@ class KifuInputTool {
     this.dropbtn     = $("#dropbtn");
     this.donebtn     = $("#donebtn");
     this.undobtn     = $("#undobtn");
+    this.passbtn     = $("#passbtn");
     this.newgamebtn  = $("#newmatchbtn");
     this.openingroll = $("#openingroll");
     this.passbtn     = $("#passbtn");
@@ -96,12 +97,13 @@ class KifuInputTool {
 
   setEventHandler() {
     //Button Click Event
-    this.doublebtn.     on('click', (e) => { e.preventDefault(); this.doubleAction(); });
+    this.undobtn.       on('click', (e) => { e.preventDefault(); this.undoAction(); });
+    this.donebtn.       on('click', (e) => { e.preventDefault(); this.doneAction(); });
     this.resignbtn.     on('click', (e) => { e.preventDefault(); this.resignAction(); });
+    this.doublebtn.     on('click', (e) => { e.preventDefault(); this.doubleAction(); });
     this.takebtn.       on('click', (e) => { e.preventDefault(); this.takeAction(); });
     this.dropbtn.       on('click', (e) => { e.preventDefault(); this.dropAction(); });
-    this.donebtn.       on('click', (e) => { e.preventDefault(); this.doneAction(); });
-    this.undobtn.       on('click', (e) => { e.preventDefault(); this.undoAction(); });
+    this.passbtn.       on('click', (e) => { e.preventDefault(); this.passAction(); });
     this.gameendnextbtn.on('click', (e) => { e.preventDefault(); this.gameendNextAction(); });
     this.gameendokbtn.  on('click', (e) => { e.preventDefault(); this.gameendOkAction(); });
     this.diceAsBtn.     on('click', (e) => { e.preventDefault(); this.diceAsDoneAction(e); });
@@ -169,11 +171,15 @@ class KifuInputTool {
     this.swapChequerDraggable(this.player);
   }
 
-  doneAction() {
+  doneAction(passflg = false) {
     if (this.donebtn.prop("disabled")) { return; }
     if (this.gameFinished) { return; }
     this.hideAllPanel();
-    this.showActionStr(this.peepXgidPosition(), this.xgid.xgidstr);
+    if (passflg) {
+      this.showActionStr("66: Cannot Move");
+    } else {
+      this.showActionStr(this.peepXgidPosition(), this.xgid.xgidstr);
+    }
     this.swapTurn();
     this.xgid.dice = "00";
     this.swapXgTurn();
@@ -235,6 +241,12 @@ class KifuInputTool {
     this.showActionStr("Drops");
     this.showGameEndPanel(this.player);
     this.gameFinished = true;
+  }
+
+  passAction() {
+    this.xgid.dice = "66";
+    this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
+    this.doneAction(true);
   }
 
   gameendNextAction() {
@@ -379,6 +391,11 @@ class KifuInputTool {
     this.doublebtn.toggle(!openroll).prop("disabled", !this.canDouble(player) );
     this.resignbtn.toggle(!openroll);
     this.openingroll.toggle(openroll);
+
+    const closeout = this.isCloseout(player);
+    this.pickdice.toggle(!closeout); //ダイス一覧かpassボタンのどちらかを表示
+    this.passbtn.toggle(closeout);
+
     const col1  = openroll ? "blue"  : (player ? "blue" : "white");
     const col2  = openroll ? "white" : (player ? "blue" : "white");
     const bgcol = openroll ? "#999"  : (player ? "#ddd" : "#444");
@@ -450,6 +467,11 @@ class KifuInputTool {
 
   swapXgTurn() {
     this.xgid.turn = -1 * this.xgid.turn;
+  }
+
+  isCloseout(player) {
+    const xgturn = BgUtil.cvtTurnGm2Xg(!player); //クローズアウトを確認するのは相手側
+    return this.xgid.isCloseout(xgturn);
   }
 
   setButtonEnabled(button, enable) {
