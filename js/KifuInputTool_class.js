@@ -80,6 +80,18 @@ class KifuInputTool {
     this.chequerall  = $(".chequer");
     //pick dice
     this.pickdice    = $(".pickdice");
+
+    //モーダルウィンドウを準備
+    this.panelWindow = new FloatWindow({
+      hoverid:  '#panelholder',
+      headid:   '#panelHeader',
+      bodyid:   '#panelBody',
+      maxbtn:   '#maxBtn',
+      minbtn:   '#minBtn',
+      closebtn: '#closeBtn',
+      width:    'auto',
+      height:   '35px'
+    });
   }
 
   setEventHandler() {
@@ -103,38 +115,6 @@ class KifuInputTool {
     this.pickdice.      on('click', (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
     $(window).          on('resize', (e) => { e.preventDefault(); this.board.redraw(); });
     $(document).        on('keydown', (e) => { this.keyInputAction(e.key); });
-
-    //モーダルウィンドウを準備
-    this.panelWindow = new FloatWindow({
-      hoverid:  '#panelholder',
-      headid:   '#panelHeader',
-      bodyid:   '#panelBody',
-      maxbtn:   '#maxBtn',
-      minbtn:   '#minBtn',
-      closebtn: '#closeBtn',
-      width:    'auto',
-      height:   '35px'
-    });
-  }
-
-  makeDiceList(dice) {
-    const dice1 = Number(dice.slice(0, 1));
-    const dice2 = Number(dice.slice(1, 2));
-    if      (dice1 == dice2) { this.dicelist = [dice1, dice1, dice1, dice1]; }
-    else if (dice1 <  dice2) { this.dicelist = [dice2, dice1]; } //大きい順
-    else                     { this.dicelist = [dice1, dice2]; }
-  }
-
-  pickDiceAction(dice) {
-    const dice1 = Number(dice.slice(0, 1));
-    const dice2 = Number(dice.slice(1, 2));
-    const dice3 = (dice1 < dice2) ? dice2 + "" + dice1 : dice; //ダイスは降順に並べる
-    this.dice = [dice1, dice2, dice3];
-    this.makeDiceList(dice3);
-
-    if (this.openingrollflag && dice1 == dice2) { return; } //オープニングロールはゾロ目を選べない
-    this.rolldouble.hide();
-    this.rollAction(this.openingrollflag);
   }
 
   initGameOption() {
@@ -202,6 +182,7 @@ class KifuInputTool {
     this.swapChequerDraggable(true, true);
     this.showRollDoublePanel(this.player);
     this.allowillegal.prop("checked", false);
+    this.flashflg = true;
   }
 
   resignAction() {
@@ -302,7 +283,27 @@ class KifuInputTool {
   flipHorizOrientation() {
     this.board.flipHorizFlag();
     this.board.flipHorizOrientation();
-    this.board.redraw(false);
+    this.board.redraw();
+  }
+
+  pickDiceAction(dice) {
+    const dice1 = Number(dice.slice(0, 1));
+    const dice2 = Number(dice.slice(1, 2));
+    const dice3 = (dice1 < dice2) ? dice2 + "" + dice1 : dice; //ダイスは降順に並べる
+    this.dice = [dice1, dice2, dice3];
+    this.makeDiceList(dice3);
+
+    if (this.openingrollflag && dice1 == dice2) { return; } //オープニングロールはゾロ目を選べない
+    this.rolldouble.hide();
+    this.rollAction(this.openingrollflag);
+  }
+
+  makeDiceList(dice) {
+    const dice1 = Number(dice.slice(0, 1));
+    const dice2 = Number(dice.slice(1, 2));
+    if      (dice1 == dice2) { this.dicelist = [dice1, dice1, dice1, dice1]; }
+    else if (dice1 <  dice2) { this.dicelist = [dice2, dice1]; } //大きい順
+    else                     { this.dicelist = [dice1, dice2]; }
   }
 
   keyInputAction(key) {

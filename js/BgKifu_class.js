@@ -62,25 +62,30 @@ class BgKifu {
       return (str + ' '.repeat(num)).substring(0, num);
     });
 
+    const replaceandtrim = ((str) => {
+      const str2 = str.replace("ILLEGAL?", "        ");
+      this.kifumat.push(str2.trimEnd());
+    });
+
     const firstxg = new Xgid(xgiddata[0]); //XGIDの一つ目を見て、スコアを取得
     const score1 = firstxg.get_sc_me();
     const score2 = firstxg.get_sc_yu();
     this.score = [0, score1, score2];
 
     //ゲームごとのヘッダを出力
-    this.kifumat.push(' Game ' + gamenum);
+    replaceandtrim(' Game ' + gamenum);
     const p1 = untrim(' ' + this.player1 + ' : ' + score1, 38);
     const p2 =  ' ' + this.player2 + ' : ' + score2;
-    this.kifumat.push(p1 + p2);
+    replaceandtrim(p1 + p2);
 
     const actionlist = this.parse_xgidlist(xgiddata);
     for (let i = 0; i < actionlist.length; i += 2) {
       let line = ('  ' + Math.trunc(i / 2 + 1) + ') ').slice(-5);
       line += untrim(actionlist[i], 34);
       line += untrim((actionlist[i+1] || ''), 34); //データがないかもしれないので対策
-      this.kifumat.push(line);
+      replaceandtrim(line);
     }
-    this.kifumat.push('');
+    replaceandtrim('');
   }
 
   parse_xgidlist(xgidlist) {
