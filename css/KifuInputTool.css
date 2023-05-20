@@ -9,14 +9,14 @@
 }
 
 html{
-  height: 100%;
+  height:100%;
 }
 
 body{
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  height: 100%;
+  margin:0;
+  padding:0;
+  min-height:100%;
+  height:100%;
 }
 
 input{
@@ -24,10 +24,10 @@ input{
 }
 
 .container{
-  background: #efe;
-  display: grid; /* Grid Layout でコンテンツを配置 */
-  grid-template-columns: 70vw auto;
-  grid-template-rows: auto auto; /*max-content auto;*/
+  background:#efe;
+  display:grid; /* Grid Layout でコンテンツを配置 */
+  grid-template-columns:70vw auto;
+  grid-template-rows:auto auto; /*max-content auto;*/
   grid-template-areas:
      'header header'
      'board  nav';
@@ -35,82 +35,89 @@ input{
 }
 
 .header{
-  grid-area: header;
-  text-align: center;
-  font-size: 2vw;
-  font-weight: bold;
+  grid-area:header;
+  text-align:center;
+  font-size:2vw;
+  font-weight:bold;
 }
 
 .mainarea{
-  grid-area: board;
-  margin: 1vh auto; /* 上寄せ、左右中央配置 */
+  grid-area:board;
+  margin:1vh auto; /* 上寄せ、左右中央配置 */
 }
 
 .mainareaflex{
-  display: flex;
-  flex-direction: column; /* toggle column, column-reverse */
+  display:flex;
+  flex-direction:column; /* toggle column, column-reverse */
 }
 
 .nav{
-  grid-area: nav;
+  grid-area:nav;
 }
 
 /* Constant definision for bgBoard.css ------------------------------ */
 :root{
-  --boardHeightNum: 70;
-  --boardWidthNum: 45;
-  --pointWidthNum: 3;
-  --cubeSizeNum: 2.7;
-  --frameSizeNum: 1.3;
-  --offtrayMarginNum: 5;
-  --offtrayHeightNum: 70; /* bgBoardApp=49, other=boardHeightNum */
-  --cubeFontSizeNum: 2;
-  --labelFontSizeNum: 0.8;
-  --stackFontSizeNum: 1.5;
+  --boardHeightNum:70;
+  --boardWidthNum:45;
+  --pointWidthNum:3;
+  --cubeSizeNum:2.7;
+  --frameSizeNum:1.3;
+  --offtrayMarginNum:5;
+  --offtrayHeightNum:70; /* bgBoardApp=49, other=boardHeightNum */
+  --cubeFontSizeNum:2;
+  --labelFontSizeNum:0.8;
+  --stackFontSizeNum:1.5;
 }
 
 
 .pagetitle{
-  font-weight: bold;
-  font-size: 120%;
-  padding-top: 0.5vh;
-  margin-bottom: 1vh;
+  font-weight:bold;
+  font-size:120%;
+  padding-top:0.5vh;
+  margin-bottom:1vh;
 }
 
 .info{
-  display: table;
-  width: 100%;
+  display:table;
+  width:100%;
 }
 .playername{
-  display: table-cell;
-  text-align: left;
-  width: 33%;
+  display:table-cell;
+  text-align:left;
+  width:33%;
 }
 .pip{
-  display: table-cell;
-  text-align: center;
-  width: 34%;
+  display:table-cell;
+  text-align:center;
+  width:34%;
 }
 .score{
-  display: table-cell;
-  text-align: right;
-  width: 33%;
+  display:table-cell;
+  text-align:right;
+  width:33%;
 }
 
 .infodisp{
-  font-weight: bold;
-  margin-bottom: 1vh;
+  margin-bottom:1vh;
+  height:14vh;
+  width:24vw;
+  border:1px solid;
+  overflow-y:scroll;
+  white-space:nowrap;
+  user-select:text;
+  background-color:#fff;
+  font-family:monospace, serif;
 }
 
 .navbutton{
-/*  width: 20vw;*/
-  height: 6vh;
+/*  width:20vw;*/
+  height:6vh;
   font-size:120%;
   text-align:left;
 }
 
-#matchlength {
-  width: 3em;
+#matchlength{
+  width:3em;
 }
 
 .panel{
@@ -131,7 +138,7 @@ input{
   font-size:150%;
   white-space:nowrap;
 }
-.oparationbtn:disabled {
+.oparationbtn:disabled{
   --bg-color:#bbb;
   --fg-color:#555;
   color:var(--fg-color);
@@ -140,26 +147,26 @@ input{
 }
 
 .pickdice{
-  font-size: 2em;
-  white-space: nowrap;
+  font-size:2em;
+  white-space:nowrap;
 }
 #openingroll{
-  font-size: 2em;
-  color: white;
+  font-size:2em;
+  color:white;
 }
 .turn1{
 }
 .turn2{
 }
 .solid{
-  background-color: #bbb;
-  padding: 2vh 2vw;
-  border: 4px solid #777;
-  width: 100%;
+  background-color:#bbb;
+  padding:2vh 2vw;
+  border:4px solid #777;
+  width:100%;
 }
 .gameend{
-  background-color: #eee;
-  color: #000;
-  padding: 2vh 2vw;
-  border: 4px solid #777;
+  background-color:#eee;
+  color:#000;
+  padding:2vh 2vw;
+  border:4px solid #777;
 }

@@ -135,7 +135,8 @@ class KifuInputTool {
     this.hideAllPanel();
     this.openingrollflag = true;
     this.showRollDoublePanel(true, this.openingrollflag);
-    this.showActionStr("Opening roll");
+    if (!newmatch) { this.showActionStr(null, "<br><br>"); }
+    this.showActionStr(null, "Opening roll");
   }
 
   async rollAction(openroll = false) {
@@ -171,15 +172,11 @@ class KifuInputTool {
     this.swapChequerDraggable(this.player);
   }
 
-  doneAction(passflg = false) {
+  doneAction() {
     if (this.donebtn.prop("disabled")) { return; }
     if (this.gameFinished) { return; }
     this.hideAllPanel();
-    if (passflg) {
-      this.showActionStr("66: Cannot Move");
-    } else {
-      this.showActionStr(this.peepXgidPosition(), this.xgid.xgidstr);
-    }
+    this.showActionStr(this.player, this.peepXgidPosition(), this.xgid.xgidstr);
     this.swapTurn();
     this.xgid.dice = "00";
     this.swapXgTurn();
@@ -195,12 +192,12 @@ class KifuInputTool {
     if (this.gameFinished) { return; }
     if (!confirm("Really Resign?")) { return; }
     this.hideAllPanel();
+    this.showActionStr(this.player, "Resign");
     this.swapTurn();
     this.xgid.dice = "00";
     this.calcScore(this.player);
     this.board.showBoard2(this.xgid);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.showActionStr("Resign");
     this.showGameEndPanel(this.player);
     this.gameFinished = true;
   }
@@ -208,45 +205,47 @@ class KifuInputTool {
   async doubleAction() {
     if (this.doublebtn.prop("disabled")) { return; }
     this.hideAllPanel();
+    this.showActionStr(this.player, "Doubles => " + Math.pow(2, this.xgid.cube + 1));
     this.swapTurn();
     this.xgid.dbloffer = true;
     this.board.showBoard2(this.xgid); //double offer
     await this.board.animateCube(this.animDelay); //キューブを揺すのはshowBoard()の後
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.showActionStr("Doubles => " + Math.pow(2, this.xgid.cube + 1));
     this.swapXgTurn(); //XGのturnを変えるのは棋譜用XGID出力後
     this.showTakeDropPanel(this.player);
   }
 
   takeAction() {
     this.hideAllPanel();
+    this.showActionStr(this.player, "Takes");
     this.swapTurn();
     this.xgid.dice = "00";
     this.xgid.cube += 1;
     this.xgid.cubepos = this.xgid.turn;
     this.board.showBoard2(this.xgid);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.showActionStr("Takes");
     this.swapXgTurn(); //XGのturnを変えるのは棋譜用XGID出力後
     this.showRollDoublePanel(this.player);
   }
 
   dropAction() {
     this.hideAllPanel();
+    this.showActionStr(this.player, "Drops");
     this.swapTurn();
     this.calcScore(this.player); //dblofferフラグをリセットする前に計算する必要あり
     this.xgid.dbloffer = false;
     this.board.showBoard2(this.xgid);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.showActionStr("Drops");
     this.showGameEndPanel(this.player);
     this.gameFinished = true;
   }
 
   passAction() {
+    this.undoStack = [];
     this.xgid.dice = "66";
+    this.pushXgidPosition();
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.doneAction(true);
+    this.doneAction();
   }
 
   gameendNextAction() {
@@ -263,9 +262,9 @@ class KifuInputTool {
 
   bearoffAllAction() {
     this.hideAllPanel();
+    this.showActionStr(this.player, this.peepXgidPosition(), this.xgid.xgidstr);
     this.calcScore(this.player); // this.player is winner
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.showActionStr("You WIN");
     this.showGameEndPanel(this.player);
     this.gameFinished = true;
   }
@@ -278,6 +277,7 @@ class KifuInputTool {
   newGameAction() {
     this.initGameOption();
     this.kifuobj.clearKifuXgid();
+    this.actiondisp.html("");
     this.beginNewGame(true);
   }
 
@@ -361,9 +361,11 @@ class KifuInputTool {
     this.score2.text(this.xgid.sc_yu);
   }
 
-  showActionStr(obj1, obj2) {
-    const action = (obj2 == null) ? obj1 : this.kifuobj.getActionStr(obj1, obj2);
-    this.actiondisp.text(action);
+  showActionStr(obj0, obj1, obj2 = null) {
+    const player = (obj0 === null) ? "" : (obj0 ? "<br>Bl " : "<br>Wh ");
+    const action = (obj2 === null) ? obj1 : this.kifuobj.getActionStr(obj1, obj2);
+    this.actiondisp.append(player + action);
+    this.actiondisp[0].scrollTo(0, this.actiondisp[0].scrollHeight);
   }
 
   calcScore(player) {
@@ -416,15 +418,18 @@ class KifuInputTool {
   makeGameEndPanal(player) {
     const playername = player ? this.player1.val() : this.player2.val();
     const mes1 = playername + " WIN" + ((this.matchwinflg) ? "<br>and the MATCH" : "");
+    const mes1dash = "You WIN" + ((this.matchwinflg) ? " and the MATCH" : "");
+    this.showActionStr(player, mes1dash);
     this.gameend.children('.mes1').html(mes1);
 
     const winlevel = ["", "SINGLE", "GAMMON", "BACK GAMMON"];
     const res = winlevel[this.gamescore[1]];
     const mes2 = "Get " + this.gamescore[0] * this.gamescore[1] + "pt (" + res + ")";
+    this.showActionStr(player, mes2);
     this.gameend.children('.mes2').text(mes2);
 
-    const matchinfo = "&emsp;(" +this.matchLength + "pt)";
-    const mes3 = this.score[1] + " - " + this.score[2] + "&emsp;(" +this.matchLength + "pt)";
+    const mes3 = this.score[1] + " - " + this.score[2] + " (" +this.matchLength + "pt)";
+    this.showActionStr(player, mes3);
     this.gameend.children('.mes3').html(mes3);
   }
 
