@@ -275,6 +275,7 @@ class KifuInputTool {
   }
 
   newGameAction() {
+    if (!confirm("Really New Match?")) { return; }
     this.initGameOption();
     this.kifuobj.clearKifuXgid();
     this.actiondisp.html("");
