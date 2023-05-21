@@ -38,7 +38,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 
 <h3>◆どうやって使うの？</h3>
 
-<h4>(1) 棋譜入力準備</h4>
+<h4>(1) 準備</h4>
 <p class="contents">
 ・対戦者の名前、マッチポイント数、イベント名、イベント日を入力します。<br>
 　→これらの情報は棋譜ファイルにコメントとして記述されます。<br>
@@ -51,26 +51,26 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 　→オープニングロールでは先攻・後攻を指定することができます。<br>
 　→この画面ではキーボードの 123456 と d の入力を受付けます。<br>
 ・マウス操作でチェッカーを動かすことができます。<br>
-　→チェッカーはドラッグ＆ドロップとクリックで操作することができます。<br>
+　→チェッカーはドラッグ＆ドロップとクリックのどちらでも操作することができます。<br>
 　→クリック操作では大きい目のダイスから使います。<br>
-・[Done] ボタンを押下するとチェッカー操作を終えます。<br>
-　→ダイス部分の左クリックで [Done] と同じ機能が動きます。<br>
-・[Undo] ボタンを押下するとチェッカー操作をやり直すことができます。<br>
-　→ダイス部分の右クリックで [Undo] と同じ機能が動きます。<br>
-・[Done][Undo] の画面ではキーボードの Enter, Space と Esc を受付けます。<br>
-　→ Enter, Space は [Done] の機能として、Esc は [Undo] の機能として動きます。<br>
+・<button><i class="fas fa-check-circle"></i> Done</button>ボタンを押下するとチェッカー操作を終えます。<br>
+　→ダイス部分の左クリックで<button><i class="fas fa-check-circle"></i> Done</button>と同じ機能が動きます。<br>
+・<button><i class="fas fa-undo"></i> Undo</button>ボタンを押下するとチェッカー操作をやり直すことができます。<br>
+　→ダイス部分の右クリックで<button><i class="fas fa-undo"></i> Undo</button>と同じ機能が動きます。<br>
+・<button><i class="fas fa-check-circle"></i> Done</button><button><i class="fas fa-undo"></i> Undo</button>の画面ではキーボードの Enter, Space と Esc を受付けます。<br>
+　→ Enter, Space は<button><i class="fas fa-check-circle"></i> Done</button>の機能として、Esc は<button><i class="fas fa-undo"></i> Undo</button>の機能として動きます。<br>
 </p>
 <h4>(3) ダブリング操作</h4>
 <p class="contents">
-・ダイス一覧画面の [Double] を押下するとダブル提案です。<br>
-・ダブルを受けた側は [Take] [Pass] のいずれかを押下します。<br>
-　→[Take] のときは棋譜入力を継続します。<br>
-　→[Pass] のときはゲーム終了画面が表示されます。<br>
-　→[Take][Pass] の画面ではキーボードの t と p の入力を受付けます。<br>
+・ダイス一覧画面の<button><i class="fas fa-dice-d6"></i> Double</button>を押下するとダブル提案です。<br>
+・ダブルを受けた側は<button><i class="fas fa-thumbs-up"></i> Take</button><button><i class="fas fa-thumbs-down"></i> Pass</button>のいずれかを押下します。<br>
+　→<button><i class="fas fa-thumbs-up"></i> Take</button>のときは棋譜入力を継続します。<br>
+　→<button><i class="fas fa-thumbs-down"></i> Pass</button>のときはゲーム終了画面が表示されます。<br>
+　→<button><i class="fas fa-thumbs-up"></i> Take</button><button><i class="fas fa-thumbs-down"></i> Pass</button>の画面ではキーボードの t と p の入力を受付けます。<br>
 </p>
 <h4>(4) リザイン</h4>
 <p class="contents">
-・ダイス一覧画面の [Resign] を押下するとリザイン(負け宣言)です。<br>
+・ダイス一覧画面の<button><i class="fas fa-flag"></i> Resign</button>を押下するとリザイン(負け宣言)です。<br>
 　→ゲーム終了画面が表示されます。<br>
 　→得点は自動的に計算されます。<br>
 　→シングル、ギャモン、バックギャモンの判定は単純なロジックで実装しています。<br>
@@ -83,13 +83,13 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 </p>
 <h4>(6) 手順戻し</h4>
 <p class="contents">
-・<button><i class="fas fa-angle-double-left"></i> Rewind Action</button> を押下すると手順を戻すことができます。<br>
+・<button><i class="fas fa-angle-double-left"></i> Rewind Action</button>を押下すると手順を戻すことができます。<br>
 　→数手順前の棋譜入力ミスに気付いたときに使う機能です。<br>
 </p>
 
 <h4>(7) 棋譜ダウンロード</h4>
 <p class="contents">
-・<button><i class="fas fa-download"></i> Download Kifu</button> を押下すると棋譜をダウンロードできます。<br>
+・<button><i class="fas fa-download"></i> Download Kifu</button>を押下すると棋譜をダウンロードできます。<br>
 　→ダウンロードした棋譜ファイルはMATフォーマットのテキストファイルです。<br>
 　→このファイルは eXtreme Gammon 2 や GnuBG などの解析ツールに読み込ませることができます。<br>
 　→解析はこれらのツールで実行してください。<br>
@@ -99,12 +99,12 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 
 <p class="contents">
 <table>
-<tr><td><button><i class="fas fa-check"></i> Begin New Match</button> </td><td>設定をクリアして新しいマッチの棋譜入力を始める</td></tr>
-<tr><td><button><i class="fas fa-angle-double-left"></i> Rewind Action</button> </td><td>入力した棋譜の手順を戻す</td></tr>
-<tr><td><button><i class="fas fa-arrows-alt-h"></i> Flip Bearoff Side</button> </td><td>ボードの左右を反転する</td></tr>
-<tr><td><button><i class="fas fa-download"></i> Download Kifu</button> </td><td>棋譜をダウンロードする</td></tr>
-<tr><td><button><i class="fas fa-question"></i> Help</button> </td><td>この説明書を開く</td></tr>
-<tr><td><button><i class="fas fa-home"></i> Home</button> </td><td>ホーム画面に戻る</td></tr>
+<tr><td><button><i class="fas fa-check"></i> Begin New Match</button>&emsp;</td><td>設定をクリアして新しいマッチの棋譜入力を始める</td></tr>
+<tr><td><button><i class="fas fa-angle-double-left"></i> Rewind Action</button></td><td>入力した棋譜の手順を戻す</td></tr>
+<tr><td><button><i class="fas fa-arrows-alt-h"></i> Flip Bearoff Side</button></td><td>ボードの左右を反転する</td></tr>
+<tr><td><button><i class="fas fa-download"></i> Download Kifu</button></td><td>棋譜をダウンロードする</td></tr>
+<tr><td><button><i class="fas fa-question"></i> Help</button></td><td>この説明書を開く</td></tr>
+<tr><td><button><i class="fas fa-home"></i> Home</button></td><td>ホーム画面に戻る</td></tr>
 </table>
 </p>
 
@@ -122,8 +122,18 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 
 <p class="contents">
 (2023/05/18) 初版リリース<br>
-(2023/05/19) クローズアウト時のパスボタンを実装<br>
+(2023/05/19) クローズアウト時の<button><i class="fas fa-ban"></i> Pass</button>ボタンを実装<br>
 (2023/05/20) 画面内に棋譜履歴を表示するよう機能拡張<br>
+(2023/05/21) <button><i class="fas fa-check"></i> Begin New Match</button>押下時に確認ダイアログを表示。意図しない押下で悲しい思い(入力中の棋譜が消失)をしないように<br>
+</p>
+
+<h3>◆追加したい機能</h3>
+
+<p class="contents">
+・フォーストムーブで自動的にチェッカーを動かす機能<br>
+・チェッカーではなく、三角形のマスの部分をクリックしてもムーブできる機能<br>
+・And more...<br>
+期待しないでくださいね。Beer Donation Please... (^_^)u<br>
 </p>
 
 <h3>◆その他</h3>
