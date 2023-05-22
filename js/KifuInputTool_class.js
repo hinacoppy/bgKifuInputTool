@@ -55,6 +55,7 @@ class KifuInputTool {
     this.rewindbtn     = $("#rewindbtn");
     this.downloadbtn   = $("#downloadbtn");
     this.allowillegal  = $("#allowillegal");
+    this.pointTriangle = $(".point");
 
     //infos
     this.site       = $("#site");
@@ -115,6 +116,7 @@ class KifuInputTool {
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.matchlen2.text(this.matchlen.val()); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.flashflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on('click', (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
+    this.pointTriangle. on('click', (e) => { e.preventDefault(); this.pointClickAction(e); });
     $(window).          on('resize', (e) => { e.preventDefault(); this.board.redraw(); });
     $(document).        on('keydown', (e) => { this.keyInputAction(e.key); });
   }
@@ -684,6 +686,23 @@ class KifuInputTool {
 
   flashOffMovablePoint() {
     this.board.flashOffMovablePoint();
+  }
+
+  pointClickAction(event) {
+    const id = event.currentTarget.id;
+    const pt = parseInt(id.substring(2));
+    const chker = this.board.getChequerOnDragging(pt, BgUtil.cvtTurnGm2Bd(this.player));
+
+    if (chker) { //chker may be undefined
+      const chkerdom = chker.dom;
+      const ui = {position: { //dragStopAction()に渡すオブジェクトを作る
+                   left: parseInt(chkerdom[0].style.left),
+                   top:  parseInt(chkerdom[0].style.top)
+                 }};
+      this.dragObject = $(chker.id);
+      this.dragStartPt = this.board.getDragEndPoint(ui.position, BgUtil.cvtTurnGm2Bd(this.player));;
+      this.dragStopAction(event, ui);
+    }
   }
 
 }

@@ -122,12 +122,21 @@
 <button id="undobtn" class="oparationbtn"><i class="fas fa-undo"></i> Undo</button>
 </div>
 
-<div id="gameend" class="panel gameend">
+<div id="gameend" class="panel">
 <p class="mes1">You WIN and the MATCH</p>
 <p class="mes2">Get <span>2</span>pt</p>
 <p class="mes3"><span>7</span> - <span>5</span> &emsp; (<span>9</span>pt)</p>
 <button id="gameendnextbtn" class="oparationbtn"><i class="fas fa-arrow-alt-circle-right"></i> Next</button>
 <button id="gameendokbtn" class="oparationbtn"><i class="fas fa-check-circle"></i> OK</button>
+</div>
+
+<div id="resign" class="panel"> <!-- JS側のロジックは未実装 -->
+<div class="paneltitle"><i class="fas fa-flag" style="color:white"></i> Resign?</div>
+&emsp;<label><input type="radio" name="resign" value="1"> Single</label><br>
+&emsp;<label><input type="radio" name="resign" value="2"> Gammon</label><br>
+&emsp;<label><input type="radio" name="resign" value="3" checked> Back gammon</label><br><br>
+<button id="resignokbtn" class="oparationbtn"><i class="fas fa-check-circle"></i> OK</button> &emsp;
+<button id="resigncancelbtn" class="oparationbtn"><i class="fas fa-times"></i> Cancel</button>
 </div>
 
 </div>
