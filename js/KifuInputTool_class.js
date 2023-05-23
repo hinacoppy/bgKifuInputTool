@@ -56,6 +56,8 @@ class KifuInputTool {
     this.downloadbtn   = $("#downloadbtn");
     this.allowillegal  = $("#allowillegal");
     this.pointTriangle = $(".point");
+    this.resignokbtn   = $("#resignokbtn");
+    this.resignclbtn   = $("#resignclbtn");
 
     //infos
     this.site       = $("#site");
@@ -77,6 +79,7 @@ class KifuInputTool {
     this.doneundo    = $("#doneundo");
     this.gameend     = $("#gameend");
     this.takedrop    = $("#takedrop");
+    this.resign      = $("#resign");
 
     //chequer
     this.chequerall  = $(".chequer");
@@ -117,6 +120,8 @@ class KifuInputTool {
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.flashflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on('click', (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
     this.pointTriangle. on('click', (e) => { e.preventDefault(); this.pointClickAction(e); });
+    this.resignokbtn.   on('click', (e) => { e.preventDefault(); this.resignOkAction(); });
+    this.resignclbtn.   on('click', (e) => { e.preventDefault(); this.resignCancelAction(); });
     $(window).          on('resize', (e) => { e.preventDefault(); this.board.redraw(); });
     $(document).        on('keydown', (e) => { this.keyInputAction(e.key); });
   }
@@ -134,15 +139,14 @@ class KifuInputTool {
     this.board.showBoard2(this.xgid);
     this.showPipInfo();
     this.swapChequerDraggable(true, true);
-    this.hideAllPanel();
     this.openingrollflag = true;
+    this.hideAllPanel();
     this.showRollDoublePanel(true, this.openingrollflag);
     if (!newmatch) { this.showActionStr(null, "<br><br>"); }
     this.showActionStr(null, "Opening roll");
   }
 
   async rollAction(openroll = false) {
-    this.hideAllPanel();
     this.undoStack = [];
     const dice = this.dice;
     if (openroll) {
@@ -154,11 +158,12 @@ class KifuInputTool {
     this.xgid.dice = dice[2];
     this.xgid.usabledice = true;
     this.board.showBoard2(this.xgid);
+    this.hideAllPanel();
+    this.showDoneUndoPanel(this.player, openroll);
     await this.board.animateDice(this.animDelay);
     this.swapChequerDraggable(this.player);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
     this.pushXgidPosition();
-    this.showDoneUndoPanel(this.player, openroll);
   }
 
   undoAction() {
@@ -177,7 +182,6 @@ class KifuInputTool {
   doneAction() {
     if (this.donebtn.prop("disabled")) { return; }
     if (this.gameFinished) { return; }
-    this.hideAllPanel();
     this.showActionStr(this.player, this.peepXgidPosition(), this.xgid.xgidstr);
     this.swapTurn();
     this.xgid.dice = "00";
@@ -185,40 +189,26 @@ class KifuInputTool {
     this.showPipInfo();
     this.board.showBoard2(this.xgid);
     this.swapChequerDraggable(true, true);
+    this.hideAllPanel();
     this.showRollDoublePanel(this.player);
     this.allowillegal.prop("checked", false);
     this.flashflg = true;
   }
 
-  resignAction() {
-    if (this.gameFinished) { return; }
-    if (!confirm("Really Resign?")) { return; }
-    this.hideAllPanel();
-    this.showActionStr(this.player, "Resign");
-    this.swapTurn();
-    this.xgid.dice = "00";
-    this.calcScore(this.player);
-    this.board.showBoard2(this.xgid);
-    this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.showGameEndPanel(this.player);
-    this.gameFinished = true;
-  }
-
   async doubleAction() {
     if (this.doublebtn.prop("disabled")) { return; }
-    this.hideAllPanel();
     this.showActionStr(this.player, "Doubles => " + Math.pow(2, this.xgid.cube + 1));
     this.swapTurn();
     this.xgid.dbloffer = true;
     this.board.showBoard2(this.xgid); //double offer
+    this.hideAllPanel();
+    this.showTakeDropPanel(this.player);
     await this.board.animateCube(this.animDelay); //キューブを揺すのはshowBoard()の後
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
     this.swapXgTurn(); //XGのturnを変えるのは棋譜用XGID出力後
-    this.showTakeDropPanel(this.player);
   }
 
   takeAction() {
-    this.hideAllPanel();
     this.showActionStr(this.player, "Takes");
     this.swapTurn();
     this.xgid.dice = "00";
@@ -227,17 +217,18 @@ class KifuInputTool {
     this.board.showBoard2(this.xgid);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
     this.swapXgTurn(); //XGのturnを変えるのは棋譜用XGID出力後
+    this.hideAllPanel();
     this.showRollDoublePanel(this.player);
   }
 
   dropAction() {
-    this.hideAllPanel();
     this.showActionStr(this.player, "Drops");
     this.swapTurn();
     this.calcScore(this.player); //dblofferフラグをリセットする前に計算する必要あり
     this.xgid.dbloffer = false;
     this.board.showBoard2(this.xgid);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
+    this.hideAllPanel();
     this.showGameEndPanel(this.player);
     this.gameFinished = true;
   }
@@ -263,10 +254,10 @@ class KifuInputTool {
   }
 
   bearoffAllAction() {
-    this.hideAllPanel();
     this.showActionStr(this.player, this.peepXgidPosition(), this.xgid.xgidstr);
     this.calcScore(this.player); // this.player is winner
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
+    this.hideAllPanel();
     this.showGameEndPanel(this.player);
     this.gameFinished = true;
   }
@@ -289,8 +280,8 @@ class KifuInputTool {
     const lastxgid = this.kifuobj.popKifuXgid();
     this.xgid = new Xgid(lastxgid);
     this.pushXgidPosition();
-    this.hideAllPanel();
     this.player = (this.xgid.turn == 1);
+    this.hideAllPanel();
     this.showDoneUndoPanel(this.player);
     this.undoAction();
   }
@@ -352,6 +343,28 @@ class KifuInputTool {
     default:
       break;
     }
+  }
+
+  resignAction() {
+    this.hideAllPanel();
+    this.showResignPanel();
+  }
+
+  resignOkAction() {
+    this.showActionStr(this.player, "Resign");
+    this.swapTurn();
+    this.xgid.dice = "00";
+    this.calcScore(this.player); //リザイン時に負け点数を選べるならここを修正
+    this.board.showBoard2(this.xgid);
+    this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
+    this.hideAllPanel();
+    this.showGameEndPanel(this.player);
+    this.gameFinished = true;
+  }
+
+  resignCancelAction() {
+    this.hideAllPanel();
+    this.showRollDoublePanel(this.player);
   }
 
   showPipInfo() {
@@ -441,6 +454,10 @@ class KifuInputTool {
     this.gameendnextbtn.toggle(!this.matchwinflg);
     this.gameendokbtn.toggle(this.matchwinflg);
     this.showElement(this.gameend);
+  }
+
+  showResignPanel(player) {
+    this.showElement(this.resign);
   }
 
   hideAllPanel() {

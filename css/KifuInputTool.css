@@ -110,10 +110,10 @@ input{
 }
 
 .navbutton{
-/*  width:20vw;*/
   height:6vh;
   font-size:120%;
   text-align:left;
+  padding:0 2vw;
 }
 
 #matchlength{
@@ -160,10 +160,6 @@ input{
 .turn1{
 }
 .turn2{
-}
-.solid{
-  background-color:#bbb;
-  width:100%;
 }
 .paneltitle{
   font-size:2em;

@@ -5,10 +5,10 @@
 <meta name="description" content="Backgammon Kifu Input Tool">
 <meta name="author" content="(C)hinacoppy 2023">
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="css/KifuInputTool.css">
 <link rel="stylesheet" href="/css/bgBoard.css">
 <link rel="stylesheet" href="/css/FloatWindow2.css">
 <link rel="stylesheet" href="/css/font-awesome-animation.min.css">
+<link rel="stylesheet" href="css/KifuInputTool.css">
 <link rel="icon" href="icon/favicon.ico">
 <link rel="apple-touch-icon" href="icon/apple-touch-icon.png">
 <title>BG Kifu Input Tool</title>
@@ -39,12 +39,12 @@
 <tr><td>Site:</td><td><input id="site" type="text" value="input event name"></td></tr>
 <tr><td>Date:</td><td><input id="date" type="text" value="2023/05/09"></td></tr>
 <tr><td><input id="allowillegal" type="checkbox"></td><td><label for="allowillegal">Allow input of illegal moves</label></td></tr>
-<tr><td colspan="2"><button id="newmatchbtn" class="navbutton">&emsp;<i class="fas fa-check"></i> Begin New Match &emsp;</button></td></tr>
-<tr><td colspan="2"><button id="rewindbtn" class="navbutton">&emsp;<i class="fas fa-angle-double-left"></i> Rewind Action &emsp;</button></td></tr>
-<tr><td colspan="2"><button id="fliphorizbtn" class="navbutton">&emsp;<i class="fas fa-arrows-alt-h"></i> Flip Bearoff Side &emsp;</button></td></tr>
-<tr><td colspan="2"><a id="downloadkifu" href="" download="kifu.txt"><button id="downloadbtn" class="navbutton">&emsp;<i class="fas fa-download"></i> Download Kifu &emsp;</button></a></td></tr>
-<tr><td colspan="2"><a href="help.html" target="help"><button class="navbutton">&emsp;<i class="fas fa-question"></i> Help &emsp;</button></a></td></tr>
-<tr><td colspan="2"><a href="../"><button class="navbutton">&emsp;<i class="fas fa-home"></i> Home &emsp;</button></a></td></tr>
+<tr><td colspan="2"><button id="newmatchbtn" class="navbutton"><i class="fas fa-check"></i> Begin New Match</button></td></tr>
+<tr><td colspan="2"><button id="rewindbtn" class="navbutton"><i class="fas fa-angle-double-left"></i> Rewind Action</button></td></tr>
+<tr><td colspan="2"><button id="fliphorizbtn" class="navbutton"><i class="fas fa-arrows-alt-h"></i> Flip Bearoff Side</button></td></tr>
+<tr><td colspan="2"><a id="downloadkifu" href="" download="kifu.txt"><button id="downloadbtn" class="navbutton"><i class="fas fa-download"></i> Download Kifu</button></a></td></tr>
+<tr><td colspan="2"><a href="help.html" target="help"><button class="navbutton"><i class="fas fa-question"></i> Help</button></a></td></tr>
+<tr><td colspan="2"><a href="../"><button class="navbutton"><i class="fas fa-home"></i> Home</button></a></td></tr>
 </table>
 </nav>
 
@@ -57,7 +57,7 @@
   </div>
 <div id="panelBody" class="modalBody">
 
-<table id="rolldouble" class="panel solid">
+<table id="rolldouble" class="panel">
 <tr><td colspan="3"><button id="doublebtn" class="oparationbtn"><i class="fas fa-dice-d6"></i> Double</button></td>
 <td colspan="3"><button id="resignbtn" class="oparationbtn"><i class="fas fa-flag" style="color:white"></i> Resign</button></td></tr>
 <tr><td id="openingroll" colspan="6"><i class="fas fa-dice"></i> Opening Roll</td></tr>
@@ -130,13 +130,15 @@
 <button id="gameendokbtn" class="oparationbtn"><i class="fas fa-check-circle"></i> OK</button>
 </div>
 
-<div id="resign" class="panel"> <!-- JS側のロジックは未実装 -->
+<div id="resign" class="panel">
 <div class="paneltitle"><i class="fas fa-flag" style="color:white"></i> Resign?</div>
+<!-- Score calculation logic is not implemented.
 &emsp;<label><input type="radio" name="resign" value="1"> Single</label><br>
 &emsp;<label><input type="radio" name="resign" value="2"> Gammon</label><br>
 &emsp;<label><input type="radio" name="resign" value="3" checked> Back gammon</label><br><br>
+-->
 <button id="resignokbtn" class="oparationbtn"><i class="fas fa-check-circle"></i> OK</button> &emsp;
-<button id="resigncancelbtn" class="oparationbtn"><i class="fas fa-times"></i> Cancel</button>
+<button id="resignclbtn" class="oparationbtn"><i class="fas fa-times"></i> Cancel</button>
 </div>
 
 </div>
@@ -149,9 +151,9 @@
 <script src="/js/BgUtil_class.js"></script>
 <script src="/js/BgXgid_class.js"></script>
 <script src="/js/BgChequer_class.js"></script>
-<script src="./js/BgKfInputBoard_class.js"></script>
-<script src="./js/BgKifu_class.js"></script>
-<script src="./js/KifuInputTool_class.js"></script>
+<script src="js/BgKfInputBoard_class.js"></script>
+<script src="js/BgKifu_class.js"></script>
+<script src="js/KifuInputTool_class.js"></script>
 <script>
   var dummy = new KifuInputTool();
 </script>
