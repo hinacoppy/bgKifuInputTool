@@ -625,10 +625,10 @@ class KifuInputTool {
 
     if (dragstartpt == dragendpt) {
       //同じ位置にドロップ(＝クリック)したときは、ダイスの目を使ったマスに動かす
-      //known bug:目を余らせて動かしたときに、次のコマがクリックで動かせないことがある
-      //ex. ベアオフで、54の目で4ptを先にクリックでベアオフすると、5ptのコマはクリックでベアオフできない
       for (let i = 0; i < this.dicelist.length; i++) {
-        const endptwk = Math.max(dragstartpt - this.dicelist[i], 0);
+        //ダイス目でピッタリに上がれればその目を使って上げる
+        const endptwk = this.dicelist.includes(dragstartpt) ? dragstartpt - this.dicelist[i]
+                                                            : Math.max(dragstartpt - this.dicelist[i], 0);
         if (xg.isMovable(dragstartpt, endptwk)) {
           this.dicelist.splice(i, 1);
           endpt = endptwk;
