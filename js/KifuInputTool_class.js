@@ -615,6 +615,7 @@ class KifuInputTool {
     this.dragObject = $(event.currentTarget); //dragStopAction()で使うがここで取り出しておかなければならない
     const id = event.currentTarget.id;
     this.dragStartPt = this.board.getDragStartPoint(id, BgUtil.cvtTurnGm2Bd(this.player));
+    this.dragStartPos = ui.position;
     this.flashOnMovablePoint(this.dragStartPt);
   }
 
@@ -647,7 +648,7 @@ class KifuInputTool {
       } else {
         //イリーガルムーブを許可したとき
         endpt = dragendpt;
-        ok = true;
+        ok = (dragstartpt > dragendpt) && !this.xgid.isBlocked(dragendpt); //掴んだマスより前でブロックポイントでなければtrue
       }
       //D&Dで動かした後クリックで動かせるようにダイスリストを調整しておく
       //known bug:ダイス組み合わせの位置に動かしたときは、次のクリックムーブが正しく動かないことがある
