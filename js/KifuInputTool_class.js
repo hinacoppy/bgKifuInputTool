@@ -44,6 +44,7 @@ class KifuInputTool {
     this.dropbtn     = $("#dropbtn");
     this.donebtn     = $("#donebtn");
     this.undobtn     = $("#undobtn");
+    this.forcedbtn   = $("#forcedbtn");
     this.passbtn     = $("#passbtn");
     this.newgamebtn  = $("#newmatchbtn");
     this.openingroll = $("#openingroll");
@@ -122,6 +123,7 @@ class KifuInputTool {
     this.pointTriangle. on('click', (e) => { e.preventDefault(); this.pointClickAction(e); });
     this.resignokbtn.   on('click', (e) => { e.preventDefault(); this.resignOkAction(); });
     this.resignclbtn.   on('click', (e) => { e.preventDefault(); this.resignCancelAction(); });
+    this.forcedbtn.     on('click', (e) => { e.preventDefault(); this.forcedMoveAction(); });
     $(window).          on('resize', (e) => { e.preventDefault(); this.board.redraw(); });
     $(document).        on('keydown', (e) => { this.keyInputAction(e.key); });
   }
@@ -174,6 +176,8 @@ class KifuInputTool {
     this.xgid.usabledice = true;
     this.makeDiceList(this.xgid.dice);
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
+    const forcebtnflg = this.xgid.isForcedMove();
+    this.forcedbtn.toggle(forcebtnflg).prop("disabled", this.xgid.moveFinished());
     this.pushXgidPosition();
     this.board.showBoard2(this.xgid);
     this.swapChequerDraggable(this.player);
@@ -182,6 +186,10 @@ class KifuInputTool {
   doneAction() {
     if (this.donebtn.prop("disabled")) { return; }
     if (this.gameFinished) { return; }
+    if (this.xgid.isBearoffAll()) {
+      this.bearoffAllAction();
+      return;
+    } // else
     this.showActionStr(this.player, this.peepXgidPosition(), this.xgid.xgidstr);
     this.swapTurn();
     this.xgid.dice = "00";
@@ -367,6 +375,14 @@ class KifuInputTool {
     this.showRollDoublePanel(this.player);
   }
 
+  forcedMoveAction() {
+    this.donebtn.prop("disabled", false);
+    this.forcedbtn.prop("disabled", true);
+    const afterxgidstr = this.xgid.getForcedMovedXgid();
+    this.xgid = new Xgid(afterxgidstr);
+    this.board.showBoard2(this.xgid);
+  }
+
   showPipInfo() {
     this.pip1.text(this.xgid.get_pip(+1));
     this.pip2.text(this.xgid.get_pip(-1));
@@ -427,6 +443,8 @@ class KifuInputTool {
 
   showDoneUndoPanel(player, opening = false) {
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
+    const forcebtnflg = this.xgid.isForcedMove();
+    this.forcedbtn.toggle(forcebtnflg).prop("disabled", this.xgid.moveFinished());
     this.showElement(this.doneundo);
     this.panelshowing = "doneundo";
   }
@@ -672,8 +690,6 @@ class KifuInputTool {
     }
     this.swapChequerDraggable(this.player);
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
-    const turn = BgUtil.cvtTurnGm2Xg(this.player);
-    if (this.xgid.get_boff(turn) == this.ckrnum) { this.bearoffAllAction(); }
   }
 
   swapChequerDraggable(player, init = false) {
