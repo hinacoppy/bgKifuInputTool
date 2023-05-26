@@ -45,10 +45,9 @@ class KifuInputTool {
     this.donebtn     = $("#donebtn");
     this.undobtn     = $("#undobtn");
     this.forcedbtn   = $("#forcedbtn");
-    this.passbtn     = $("#passbtn");
+    this.dancebtn    = $("#dancebtn");
     this.newgamebtn  = $("#newmatchbtn");
     this.openingroll = $("#openingroll");
-    this.passbtn     = $("#passbtn");
     this.gameendnextbtn= $("#gameendnextbtn");
     this.gameendokbtn  = $("#gameendokbtn");
     this.diceAsBtn     = $("#dice10,#dice11,#dice20,#dice21");
@@ -108,7 +107,7 @@ class KifuInputTool {
     this.doublebtn.     on('click', (e) => { e.preventDefault(); this.doubleAction(); });
     this.takebtn.       on('click', (e) => { e.preventDefault(); this.takeAction(); });
     this.dropbtn.       on('click', (e) => { e.preventDefault(); this.dropAction(); });
-    this.passbtn.       on('click', (e) => { e.preventDefault(); this.passAction(); });
+    this.dancebtn.      on('click', (e) => { e.preventDefault(); this.danceAction(); });
     this.gameendnextbtn.on('click', (e) => { e.preventDefault(); this.gameendNextAction(); });
     this.gameendokbtn.  on('click', (e) => { e.preventDefault(); this.gameendOkAction(); });
     this.diceAsBtn.     on('click', (e) => { e.preventDefault(); this.diceAsDoneAction(e); });
@@ -241,7 +240,7 @@ class KifuInputTool {
     this.gameFinished = true;
   }
 
-  passAction() {
+  danceAction() {
     this.undoStack = [];
     this.xgid.dice = "66";
     this.pushXgidPosition();
@@ -428,7 +427,7 @@ class KifuInputTool {
 
     const closeout = this.isCloseout(player);
     this.pickdice.toggle(!closeout); //ダイス一覧かpassボタンのどちらかを表示
-    this.passbtn.toggle(closeout);
+    this.dancebtn.toggle(closeout);
 
     const col1  = openroll ? "blue"  : (player ? "blue" : "white");
     const col2  = openroll ? "white" : (player ? "blue" : "white");
