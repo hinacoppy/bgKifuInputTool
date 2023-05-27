@@ -129,13 +129,12 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 (2023/05/22) チェッカーではなく、三角形のマスの部分をクリックしてもムーブできるよう機能拡張<br>
 (2023/05/23) リザイン時の確認ダイアログを[Action Panel]に統合<br>
 (2023/05/26) フォーストムーブで自動的にチェッカーを動かす<button><i class="fas fa-dragon"></i> Forced</button>ボタンを実装<br>
-(2023/05/27) <button><i class="fas fa-dragon"></i> Forced</button>のキーボード入力を実装<br>
 </p>
 
 <h3>◆追加するかもしれない機能</h3>
 
 <p class="contents">
-・リザイン時に得点を選択できる機能(実ゲームとのルール齟齬のためニーズ調査中)<br>
+・リザイン時に得点を選択できる機能(<span onclick="showRuleDiff();" style="color:#00f">実ゲームとのルール齟齬</span>のためニーズ調査中)<br>
 ・And more...<br>
 </p>
 
@@ -151,15 +150,28 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 <script src="/js/fontawesome-inuse.min.js"></script>
 <script>
 function showResignRule() {
-  const rule = `
-リザイン時のスコア判定ロジック
+  const msg = `リザイン時のスコア判定ロジック
 
 (1)一枚でも上がっていれば、シングル負け
 (2)コンタクトがあれば、バックギャモン負け
 (3)自駒が19ptよりも後ろにあれば、バックギャモン負け
 (4)それ以外は、ギャモン負け`;
 
-  alert(rule);
+  alert(msg);
+}
+
+function showRuleDiff() {
+  const msg = `\
+実ゲームで、ギャモン負けが確定しているにもかかわらず
+シングル負けでのリザイン(負け宣言)はルール違反。
+
+実際にはリザイン時に負け得点を宣言することがあるが、
+その得点になることの双方の合意が取れているからである。
+
+棋譜入力ツールにその合意機能は必要なのだろうか？
+もう少し局面を進めれば自動判断できる状態になるのに。。`;
+
+  alert(msg);
 }
 </script>
 </body>
