@@ -27,6 +27,7 @@ class KifuInputTool {
     this.animDelay = 800;
     this.gameFinished = true;
     this.flashflg = true;
+    this.forcedflg = false;
 
     this.setDomNames();
     this.setEventHandler();
@@ -116,7 +117,7 @@ class KifuInputTool {
     this.rewindbtn.     on('click', (e) => { e.preventDefault(); this.rewindAction(); });
     this.fliphorizbtn.  on('click', (e) => { e.preventDefault(); this.flipHorizOrientation(); });
     this.downloadbtn.   on('click', (e) => { e.preventDefault(); this.kifuobj.downloadKifuAction(); });
-    this.matchlen.      on("change", (e) => { e.preventDefault(); this.matchlen2.text(this.matchlen.val()); });
+    this.matchlen.      on("change", (e) => { e.preventDefault(); this.changeMatchLengthAction(); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.flashflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on('click', (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
     this.pointTriangle. on('click', (e) => { e.preventDefault(); this.pointClickAction(e); });
@@ -175,8 +176,8 @@ class KifuInputTool {
     this.xgid.usabledice = true;
     this.makeDiceList(this.xgid.dice);
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
-    const forcebtnflg = this.xgid.isForcedMove();
-    this.forcedbtn.toggle(forcebtnflg).prop("disabled", this.xgid.moveFinished());
+    this.forcedflg = this.xgid.isForcedMove();
+    this.forcedbtn.toggle(this.forcedflg).prop("disabled", this.xgid.moveFinished());
     this.pushXgidPosition();
     this.board.showBoard2(this.xgid);
     this.swapChequerDraggable(this.player);
@@ -338,6 +339,8 @@ class KifuInputTool {
         this.doneAction();
       } else if (key == "Escape") {
         this.undoAction();
+      } else if (this.forcedflg && key == "f") { //フォーストのときは f を受け付ける
+        this.forcedMoveAction();
       }
       break;
     case "takedrop": //take dropは、t p を受け付ける
@@ -382,14 +385,22 @@ class KifuInputTool {
     this.board.showBoard2(this.xgid);
   }
 
+  changeMatchLengthAction() {
+    this.matchLength = this.matchlen.val();
+    this.matchlen2.text(this.matchLength);
+  }
+
   showPipInfo() {
     this.pip1.text(this.xgid.get_pip(+1));
     this.pip2.text(this.xgid.get_pip(-1));
   }
 
   showScoreInfo() {
-    this.score1.text(this.xgid.sc_me);
-    this.score2.text(this.xgid.sc_yu);
+    const cfplayer = this.xgid.getCrawfordPlayer();
+    const sc1 = this.xgid.sc_me + ((cfplayer == +1) ? "*" : "");
+    const sc2 = this.xgid.sc_yu + ((cfplayer == -1) ? "*" : "");
+    this.score1.text(sc1);
+    this.score2.text(sc2);
   }
 
   showActionStr(obj0, obj1, obj2 = null) {
@@ -442,8 +453,8 @@ class KifuInputTool {
 
   showDoneUndoPanel(player, opening = false) {
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
-    const forcebtnflg = this.xgid.isForcedMove();
-    this.forcedbtn.toggle(forcebtnflg).prop("disabled", this.xgid.moveFinished());
+    this.forcedflg = this.xgid.isForcedMove(); //rewindAction()時にも呼ばれるため、rollAction()ではなくここで確認
+    this.forcedbtn.toggle(this.forcedflg).prop("disabled", this.xgid.moveFinished());
     this.showElement(this.doneundo);
     this.panelshowing = "doneundo";
   }
