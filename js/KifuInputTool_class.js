@@ -259,6 +259,7 @@ class KifuInputTool {
   gameendOkAction() {
     this.hideAllPanel();
     this.showScoreInfo();
+    this.kifuobj.pushKifuXgid('');
   }
 
   bearoffAllAction() {
