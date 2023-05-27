@@ -48,7 +48,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 <h4>(2) 棋譜入力</h4>
 <p class="contents">
 ・ダイス一覧が表示され、出目を選択します。<br>
-　→オープニングロールでは先攻・後攻を指定することができます。<br>
+　→オープニングロールでは選択するダイスの色で先攻・後攻を選びます。<br>
 　→この画面ではキーボードの 123456 と d の入力を受付けます。<br>
 ・マウス操作でチェッカーを動かすことができます。<br>
 　→チェッカーはドラッグ＆ドロップとクリックのどちらでも操作することができます。<br>
@@ -59,6 +59,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 　→ダイス部分の右クリックで<button><i class="fas fa-undo"></i> Undo</button>と同じ機能が動きます。<br>
 ・<button><i class="fas fa-check-circle"></i> Done</button><button><i class="fas fa-undo"></i> Undo</button>の画面ではキーボードの Enter, Space と Esc を受付けます。<br>
 　→ Enter, Space は<button><i class="fas fa-check-circle"></i> Done</button>の機能として、Esc は<button><i class="fas fa-undo"></i> Undo</button>の機能として動きます。<br>
+・<button><i class="fas fa-dragon"></i> Forced</button>が押せるときはキーボードの f を受付けます。<br>
 </p>
 <h4>(3) ダブリング操作</h4>
 <p class="contents">
@@ -74,7 +75,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 　→本当にリザインするかどうかを<button><i class="fas fa-check-circle"></i> OK</button><button><i class="fas fa-times"></i> Cancel</button>で決定します。<br>
 　→<button><i class="fas fa-check-circle"></i> OK</button>を押下するとゲーム終了です。<br>
 　→得点は自動的に計算されます。<br>
-　→シングル、ギャモン、バックギャモンの判定は単純なロジックで実装しています。<br>
+　→シングル、ギャモン、バックギャモンの判定は<span onclick="showResignRule();" style="color:#00f">単純なロジック</span>で実装しています。<br>
 </p>
 <h4>(5) イリーガルムーブ</h4>
 <p class="contents">
@@ -92,7 +93,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 <h4>(7) 棋譜ダウンロード</h4>
 <p class="contents">
 ・<button><i class="fas fa-download"></i> Download Kifu</button>を押下すると棋譜をダウンロードできます。<br>
-　→ダウンロードした棋譜ファイルはMATフォーマットのテキストファイルです。<br>
+　→ダウンロードした棋譜ファイルはMAT形式のテキストファイルです。<br>
 　→このファイルは eXtreme Gammon 2 や GnuBG などの解析ツールに読み込ませることができます。<br>
 　→解析はこれらのツールで実行してください。<br>
 </p>
@@ -128,6 +129,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 (2023/05/22) チェッカーではなく、三角形のマスの部分をクリックしてもムーブできるよう機能拡張<br>
 (2023/05/23) リザイン時の確認ダイアログを[Action Panel]に統合<br>
 (2023/05/26) フォーストムーブで自動的にチェッカーを動かす<button><i class="fas fa-dragon"></i> Forced</button>ボタンを実装<br>
+(2023/05/27) <button><i class="fas fa-dragon"></i> Forced</button>のキーボード入力を実装<br>
 </p>
 
 <h3>◆追加するかもしれない機能</h3>
@@ -140,11 +142,25 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 <h3>◆その他</h3>
 
 <p class="contents">
-バグ報告や機能拡張要望は kawakami あっと js4.so-net.ne.jp に。<br>
-対応するかどうかは期待しないでくださいね。Beer Donation Please... (^_^)u<br><br>
+バグ報告や機能拡張要望は kawakami あっと js4.so-net.ne.jp にお願いします。<br>
+対応するかどうかは期待しないでくださいね。Beer Donation Please... (^_^)u<br>
+<br>
 (C)hinacoppy 2023
 </p>
 
 <script src="/js/fontawesome-inuse.min.js"></script>
+<script>
+function showResignRule() {
+  const rule = `
+リザイン時のスコア判定ロジック
+
+(1)一枚でも上がっていれば、シングル負け
+(2)コンタクトがあれば、バックギャモン負け
+(3)自駒が19ptよりも後ろにあれば、バックギャモン負け
+(4)それ以外は、ギャモン負け`;
+
+  alert(rule);
+}
+</script>
 </body>
 </html>
