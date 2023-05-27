@@ -24,7 +24,7 @@ class KifuInputTool {
     this.board.resetBoard();
     this.kifuobj = new BgKifu();
     this.undoStack = [];
-    this.animDelay = 800;
+    this.animDelay = 500;
     this.gameFinished = true;
     this.flashflg = true;
     this.forcedflg = false;
@@ -211,7 +211,9 @@ class KifuInputTool {
     this.board.showBoard2(this.xgid); //double offer
     this.hideAllPanel();
     this.showTakeDropPanel(this.player);
+    this.setButtonEnabled(this.takebtn, false); //アニメーションしているときはTakeボタンは押せない
     await this.board.animateCube(this.animDelay); //キューブを揺すのはshowBoard()の後
+    this.setButtonEnabled(this.takebtn, true);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
     this.swapXgTurn(); //XGのturnを変えるのは棋譜用XGID出力後
   }
@@ -389,6 +391,7 @@ class KifuInputTool {
   changeMatchLengthAction() {
     this.matchLength = this.matchlen.val();
     this.matchlen2.text(this.matchLength);
+    this.xgid.matchsc = this.matchLength;
   }
 
   showPipInfo() {
