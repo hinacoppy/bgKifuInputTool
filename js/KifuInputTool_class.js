@@ -287,36 +287,32 @@ class KifuInputTool {
   }
 
   rewindAction() {
-    const peepxgid = this.kifuobj.peepKifuXgid();
-    if (!peepxgid) { return; } //rewindで戻せるのは空行で区切られたゲーム境界まで
-                               //known bug:オープニングロールの出目は巻き戻せない
+    const last0xgid = this.kifuobj.peepKifuXgid(0);
+    const last1xgid = this.kifuobj.peepKifuXgid(1);
+    if (!last1xgid) { return; } //rewindで戻せるのは空行で区切られたゲーム境界まで
+                                //known bug:オープニングロールの出目は巻き戻せない
+    const getDice   = ((xgidstr) => { const s = xgidstr.split(":"); return s[4]; }); //utility function
+    const getPlayer = ((xgidstr) => { const s = xgidstr.split(":"); return (s[3] == 1); });
 
-    const getDice = ((xgidstr) => { const s = xgidstr.split(":"); return s[4]; }); //utility function
-    const dice = getDice(peepxgid);
-
-    let lastxgid;
-    let action = "checker";
-    if (dice == "00") {
-      const dummy = this.kifuobj.popKifuXgid(); //ignore (dice=00)
-      lastxgid = this.kifuobj.popKifuXgid(); //double offer xgid (dice=D)
-      action = "cube";
-    } else if (dice == "D") {
-      const dummy = this.kifuobj.popKifuXgid(); //ignore (dice=D)
-      lastxgid = this.kifuobj.popKifuXgid(); //checker action before doubling (dice=xx)
-      action = "checker";
-    } else { //dice == "xx"
-      lastxgid = this.kifuobj.popKifuXgid(); //checker action (dice=xx)
-      action = "checker";
-    }
-
-    this.xgid = new Xgid(lastxgid);
-    this.player = (this.xgid.turn == 1);
-
-    if (action == "cube") {
+    const dice = getDice(last1xgid);
+    if (dice == "00") { //rewind cube action
+      const dummy1 = this.kifuobj.popKifuXgid(); //ignore (dice=xx)
+      const dummy2 = this.kifuobj.popKifuXgid(); //ignore (dice=00)
+      const lastxgid = this.kifuobj.popKifuXgid(); //double offer xgid (dice=D)
+      this.player = getPlayer(lastxgid);
       this.showActionStr(this.player, "Rewind Cube Action");
+      this.xgid = new Xgid(lastxgid);
       this.doubleAction();
-    } else { //action == "checker"
-      this.showActionStr(this.player, "Rewind " + this.xgid.dice);
+    } else { //rewind checker action
+      let lastxgid = this.kifuobj.popKifuXgid();
+      if (this.xgid.moveFinished()) {
+        //動かし終えているときはundoActionとして動かす
+        this.kifuobj.pushKifuXgid(lastxgid);
+      } else {
+        lastxgid = last1xgid;
+      }
+      this.player = getPlayer(lastxgid);
+      this.showActionStr(this.player, "Rewind " + getDice(lastxgid));
       this.clearXgidPosition();
       this.pushXgidPosition(lastxgid);
       this.hideAllPanel();

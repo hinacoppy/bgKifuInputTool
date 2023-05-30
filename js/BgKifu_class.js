@@ -15,8 +15,10 @@ class BgKifu {
   popKifuXgid() {
     return this.xgidarray.pop();
   }
-  peepKifuXgid() {
-    return this.xgidarray[this.xgidarray.length - 1];
+  peepKifuXgid(offset = 0) {
+    const idx = this.xgidarray.length - 1 - offset;
+    return idx < 0 ? null : this.xgidarray[idx];
+//    return this.xgidarray[this.xgidarray.length - 1 - offset];
   }
 
   downloadKifuAction() {
