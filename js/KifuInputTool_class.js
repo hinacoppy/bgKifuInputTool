@@ -1,5 +1,5 @@
 // KifuInputTool_class.js
-'use strict';
+"use strict";
 
 class KifuInputTool {
   constructor(gametype = "normal") {
@@ -89,43 +89,43 @@ class KifuInputTool {
 
     //モーダルウィンドウを準備
     this.panelWindow = new FloatWindow({
-      hoverid:  '#panelholder',
-      headid:   '#panelHeader',
-      bodyid:   '#panelBody',
-      maxbtn:   '#maxBtn',
-      minbtn:   '#minBtn',
-      closebtn: '#closeBtn',
-      width:    'auto',
-      height:   '35px'
+      hoverid:  "#panelholder",
+      headid:   "#panelHeader",
+      bodyid:   "#panelBody",
+      maxbtn:   "#maxBtn",
+      minbtn:   "#minBtn",
+      closebtn: "#closeBtn",
+      width:    "auto",
+      height:   "35px"
     });
   }
 
   setEventHandler() {
     //Button Click Event
-    this.undobtn.       on('click', (e) => { e.preventDefault(); this.undoAction(); });
-    this.donebtn.       on('click', (e) => { e.preventDefault(); this.doneAction(); });
-    this.resignbtn.     on('click', (e) => { e.preventDefault(); this.resignAction(); });
-    this.doublebtn.     on('click', (e) => { e.preventDefault(); this.doubleAction(); });
-    this.takebtn.       on('click', (e) => { e.preventDefault(); this.takeAction(); });
-    this.dropbtn.       on('click', (e) => { e.preventDefault(); this.dropAction(); });
-    this.dancebtn.      on('click', (e) => { e.preventDefault(); this.danceAction(); });
-    this.gameendnextbtn.on('click', (e) => { e.preventDefault(); this.gameendNextAction(); });
-    this.gameendokbtn.  on('click', (e) => { e.preventDefault(); this.gameendOkAction(); });
-    this.diceAsBtn.     on('click', (e) => { e.preventDefault(); this.diceAsDoneAction(e); });
-    this.diceAsBtn.     on('contextmenu',  (e) => { e.preventDefault(); this.undoAction(); });
-    this.newgamebtn.    on('click', (e) => { e.preventDefault(); this.newGameAction(); });
-    this.rewindbtn.     on('click', (e) => { e.preventDefault(); this.rewindAction(); });
-    this.fliphorizbtn.  on('click', (e) => { e.preventDefault(); this.flipHorizOrientation(); });
-    this.downloadbtn.   on('click', (e) => { e.preventDefault(); this.kifuobj.downloadKifuAction(); });
+    this.undobtn.       on("click", (e) => { e.preventDefault(); this.undoAction(); });
+    this.donebtn.       on("click", (e) => { e.preventDefault(); this.doneAction(); });
+    this.resignbtn.     on("click", (e) => { e.preventDefault(); this.resignAction(); });
+    this.doublebtn.     on("click", (e) => { e.preventDefault(); this.doubleAction(); });
+    this.takebtn.       on("click", (e) => { e.preventDefault(); this.takeAction(); });
+    this.dropbtn.       on("click", (e) => { e.preventDefault(); this.dropAction(); });
+    this.dancebtn.      on("click", (e) => { e.preventDefault(); this.danceAction(); });
+    this.gameendnextbtn.on("click", (e) => { e.preventDefault(); this.gameendNextAction(); });
+    this.gameendokbtn.  on("click", (e) => { e.preventDefault(); this.gameendOkAction(); });
+    this.diceAsBtn.     on("click", (e) => { e.preventDefault(); this.diceAsDoneAction(e); });
+    this.diceAsBtn.     on("contextmenu",  (e) => { e.preventDefault(); this.undoAction(); });
+    this.newgamebtn.    on("click", (e) => { e.preventDefault(); this.newGameAction(); });
+    this.rewindbtn.     on("click", (e) => { e.preventDefault(); this.rewindAction(); });
+    this.fliphorizbtn.  on("click", (e) => { e.preventDefault(); this.flipHorizOrientation(); });
+    this.downloadbtn.   on("click", (e) => { e.preventDefault(); this.kifuobj.downloadKifuAction(); });
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.changeMatchLengthAction(); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.flashflg = !this.allowillegal.prop("checked"); });
-    this.pickdice.      on('click', (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
-    this.pointTriangle. on('click', (e) => { e.preventDefault(); this.pointClickAction(e); });
-    this.resignokbtn.   on('click', (e) => { e.preventDefault(); this.resignOkAction(); });
-    this.resignclbtn.   on('click', (e) => { e.preventDefault(); this.resignCancelAction(); });
-    this.forcedbtn.     on('click', (e) => { e.preventDefault(); this.forcedMoveAction(); });
-    $(window).          on('resize', (e) => { e.preventDefault(); this.board.redraw(); });
-    $(document).        on('keydown', (e) => { this.keyInputAction(e.key); });
+    this.pickdice.      on("click", (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
+    this.pointTriangle. on("click", (e) => { e.preventDefault(); this.pointClickAction(e); });
+    this.resignokbtn.   on("click", (e) => { e.preventDefault(); this.resignOkAction(); });
+    this.resignclbtn.   on("click", (e) => { e.preventDefault(); this.resignCancelAction(); });
+    this.forcedbtn.     on("click", (e) => { e.preventDefault(); this.forcedMoveAction(); });
+    $(window).          on("resize", (e) => { e.preventDefault(); this.board.redraw(); });
+    $(document).        on("keydown", (e) => { this.keyInputAction(e.key); });
   }
 
   initGameOption() {
@@ -149,7 +149,6 @@ class KifuInputTool {
   }
 
   async rollAction(openroll = false) {
-    this.undoStack = [];
     const dice = this.dice;
     if (openroll) {
       this.player = (dice[0] > dice[1]);
@@ -161,11 +160,12 @@ class KifuInputTool {
     this.xgid.usabledice = true;
     this.board.showBoard2(this.xgid);
     this.hideAllPanel();
-    this.showDoneUndoPanel(this.player, openroll);
+    this.showDoneUndoPanel();
     await this.board.animateDice(this.animDelay);
     this.swapChequerDraggable(this.player);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.pushXgidPosition();
+    this.clearXgidPosition();
+    this.pushXgidPosition(this.xgid.xgidstr);
   }
 
   undoAction() {
@@ -178,7 +178,7 @@ class KifuInputTool {
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
     this.forcedflg = this.xgid.isForcedMove();
     this.forcedbtn.toggle(this.forcedflg).prop("disabled", this.xgid.moveFinished());
-    this.pushXgidPosition();
+    this.pushXgidPosition(this.xgid.xgidstr);
     this.board.showBoard2(this.xgid);
     this.swapChequerDraggable(this.player);
   }
@@ -204,13 +204,13 @@ class KifuInputTool {
   }
 
   async doubleAction() {
-    if (this.doublebtn.prop("disabled")) { return; }
+    if (!this.canDouble(this.player)) { return; }
     this.showActionStr(this.player, "Doubles => " + Math.pow(2, this.xgid.cube + 1));
     this.swapTurn();
     this.xgid.dbloffer = true;
     this.board.showBoard2(this.xgid); //double offer
     this.hideAllPanel();
-    this.showTakeDropPanel(this.player);
+    this.showTakeDropPanel();
     this.setButtonEnabled(this.takebtn, false); //アニメーションしているときはTakeボタンは押せない
     await this.board.animateCube(this.animDelay); //キューブを揺すのはshowBoard()の後
     this.setButtonEnabled(this.takebtn, true);
@@ -244,9 +244,9 @@ class KifuInputTool {
   }
 
   danceAction() {
-    this.undoStack = [];
     this.xgid.dice = "66";
-    this.pushXgidPosition();
+    this.clearXgidPosition();
+    this.pushXgidPosition(this.xgid.xgidstr);
     this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
     this.doneAction();
   }
@@ -254,14 +254,14 @@ class KifuInputTool {
   gameendNextAction() {
     this.hideAllPanel();
     this.showScoreInfo();
-    this.kifuobj.pushKifuXgid(''); //空行
+    this.kifuobj.pushKifuXgid(""); //空行
     this.beginNewGame(false);
   }
 
   gameendOkAction() {
     this.hideAllPanel();
     this.showScoreInfo();
-    this.kifuobj.pushKifuXgid('');
+    this.kifuobj.pushKifuXgid("");
   }
 
   bearoffAllAction() {
@@ -287,14 +287,42 @@ class KifuInputTool {
   }
 
   rewindAction() {
-    if (!this.kifuobj.peepKifuXgid()) { return; } //rewindで戻せるのは空行で区切られたゲーム境界まで
-    const lastxgid = this.kifuobj.popKifuXgid();
+    const peepxgid = this.kifuobj.peepKifuXgid();
+    if (!peepxgid) { return; } //rewindで戻せるのは空行で区切られたゲーム境界まで
+                               //known bug:オープニングロールの出目は巻き戻せない
+
+    const getDice = ((xgidstr) => { const s = xgidstr.split(":"); return s[4]; }); //utility function
+    const dice = getDice(peepxgid);
+
+    let lastxgid;
+    let action = "checker";
+    if (dice == "00") {
+      const dummy = this.kifuobj.popKifuXgid(); //ignore (dice=00)
+      lastxgid = this.kifuobj.popKifuXgid(); //double offer xgid (dice=D)
+      action = "cube";
+    } else if (dice == "D") {
+      const dummy = this.kifuobj.popKifuXgid(); //ignore (dice=D)
+      lastxgid = this.kifuobj.popKifuXgid(); //checker action before doubling (dice=xx)
+      action = "checker";
+    } else { //dice == "xx"
+      lastxgid = this.kifuobj.popKifuXgid(); //checker action (dice=xx)
+      action = "checker";
+    }
+
     this.xgid = new Xgid(lastxgid);
-    this.pushXgidPosition();
     this.player = (this.xgid.turn == 1);
-    this.hideAllPanel();
-    this.showDoneUndoPanel(this.player);
-    this.undoAction();
+
+    if (action == "cube") {
+      this.showActionStr(this.player, "Rewind Cube Action");
+      this.doubleAction();
+    } else { //action == "checker"
+      this.showActionStr(this.player, "Rewind " + this.xgid.dice);
+      this.clearXgidPosition();
+      this.pushXgidPosition(lastxgid);
+      this.hideAllPanel();
+      this.showDoneUndoPanel();
+      this.undoAction();
+    }
   }
 
   flipHorizOrientation() {
@@ -430,7 +458,7 @@ class KifuInputTool {
     return !this.xgid.crawford && (this.xgid.cubepos == 0) || (this.xgid.cubepos == this.xgid.turn);
   }
 
-  showTakeDropPanel(player) {
+  showTakeDropPanel() {
     this.showElement(this.takedrop);
     this.panelshowing = "takedrop";
   }
@@ -455,7 +483,7 @@ class KifuInputTool {
     this.panelshowing = "rolldouble";
   }
 
-  showDoneUndoPanel(player, opening = false) {
+  showDoneUndoPanel() {
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
     this.forcedflg = this.xgid.isForcedMove(); //rewindAction()時にも呼ばれるため、rollAction()ではなくここで確認
     this.forcedbtn.toggle(this.forcedflg).prop("disabled", this.xgid.moveFinished());
@@ -463,26 +491,26 @@ class KifuInputTool {
     this.panelshowing = "doneundo";
   }
 
-  makeGameEndPanal(player) {
+  makeGameEndPanel(player) {
     const playername = player ? this.player1.val() : this.player2.val();
     const mes1 = playername + " WIN" + ((this.matchwinflg) ? "<br>and the MATCH" : "");
     const mes1dash = "You WIN" + ((this.matchwinflg) ? " and the MATCH" : "");
     this.showActionStr(player, mes1dash);
-    this.gameend.children('.mes1').html(mes1);
+    this.gameend.children(".mes1").html(mes1);
 
     const winlevel = ["", "SINGLE", "GAMMON", "BACK GAMMON"];
     const res = winlevel[this.gamescore[1]];
     const mes2 = "Get " + this.gamescore[0] * this.gamescore[1] + "pt (" + res + ")";
     this.showActionStr(player, mes2);
-    this.gameend.children('.mes2').text(mes2);
+    this.gameend.children(".mes2").text(mes2);
 
     const mes3 = this.score[1] + " - " + this.score[2] + " (" +this.matchLength + "pt)";
     this.showActionStr(player, mes3);
-    this.gameend.children('.mes3').html(mes3);
+    this.gameend.children(".mes3").html(mes3);
   }
 
   showGameEndPanel(player) {
-    this.makeGameEndPanal(player);
+    this.makeGameEndPanel(player);
     this.gameendnextbtn.toggle(!this.matchwinflg);
     this.gameendokbtn.toggle(this.matchwinflg);
     this.showElement(this.gameend);
@@ -506,8 +534,8 @@ class KifuInputTool {
     $("#panelBody").css("padding", 0);
   }
 
-  pushXgidPosition() {
-   this.undoStack.push(this.xgid.xgidstr);
+  pushXgidPosition(xgidstr) {
+   this.undoStack.push(xgidstr);
   }
 
   popXgidPosition() {
@@ -515,7 +543,11 @@ class KifuInputTool {
   }
 
   peepXgidPosition() {
-    return this.undoStack[0];
+    return this.undoStack[this.undoStack.length - 1];
+  }
+
+  clearXgidPosition() {
+   this.undoStack = [];
   }
 
   swapTurn() {
