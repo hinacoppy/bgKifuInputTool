@@ -115,7 +115,7 @@ class KifuInputTool {
     this.diceAsBtn.     on("contextmenu",  (e) => { e.preventDefault(); this.undoAction(); });
     this.newgamebtn.    on("click", (e) => { e.preventDefault(); this.newGameAction(); });
     this.rewindbtn.     on("click", (e) => { e.preventDefault(); this.rewindAction(); });
-    this.fliphorizbtn.  on("click", (e) => { e.preventDefault(); this.flipHorizOrientation(); });
+    this.fliphorizbtn.  on("click", (e) => { e.preventDefault(); this.flipHorizOrientationAction(); });
     this.downloadbtn.   on("click", (e) => { e.preventDefault(); this.kifuobj.downloadKifuAction(); });
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.changeMatchLengthAction(); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.flashflg = !this.allowillegal.prop("checked"); });
@@ -296,32 +296,35 @@ class KifuInputTool {
 
     const dice = getDice(last1xgid);
     if (dice == "00") { //rewind cube action
+      //一つ前の履歴がtakeアクションだったときは、三つ前のダブルオファーのxgidを取り出す
       const dummy1 = this.kifuobj.popKifuXgid(); //ignore (dice=xx)
       const dummy2 = this.kifuobj.popKifuXgid(); //ignore (dice=00)
-      const lastxgid = this.kifuobj.popKifuXgid(); //double offer xgid (dice=D)
-      this.player = getPlayer(lastxgid);
+      const doubleofferxgid = this.kifuobj.popKifuXgid(); //double offer xgid (dice=D)
+      this.player = getPlayer(doubleofferxgid);
       this.showActionStr(this.player, "Rewind Cube Action");
-      this.xgid = new Xgid(lastxgid);
+      this.xgid = new Xgid(doubleofferxgid);
       this.doubleAction();
     } else { //rewind checker action
       let lastxgid = this.kifuobj.popKifuXgid();
       if (this.xgid.moveFinished()) {
-        //動かし終えているときはundoActionとして動かす
         this.kifuobj.pushKifuXgid(lastxgid);
+        //Doneボタンが押せる状態になっているときは単純なundoActionとして動かすため、pop/pushして履歴を残す
       } else {
         lastxgid = last1xgid;
+        //ダブルオファーの履歴をスキップするため、一つ前のxgidを使う
+        //上記でpopしたlastxgidは捨てる
       }
       this.player = getPlayer(lastxgid);
       this.showActionStr(this.player, "Rewind " + getDice(lastxgid));
       this.clearXgidPosition();
-      this.pushXgidPosition(lastxgid);
+      this.pushXgidPosition(lastxgid); //rollActionした状態にしてundoActionに渡す
       this.hideAllPanel();
       this.showDoneUndoPanel();
       this.undoAction();
     }
   }
 
-  flipHorizOrientation() {
+  flipHorizOrientationAction() {
     this.board.flipHorizFlag();
     this.board.flipHorizOrientation();
     this.board.redraw();
