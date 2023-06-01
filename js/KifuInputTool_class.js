@@ -120,12 +120,13 @@ class KifuInputTool {
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.changeMatchLengthAction(); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.flashflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on("click", (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
-    this.pointTriangle. on("click", (e) => { e.preventDefault(); this.pointClickAction(e); });
+    this.pointTriangle. on("click contextmenu", (e) => { e.preventDefault(); this.pointClickAction(e); });
     this.resignokbtn.   on("click", (e) => { e.preventDefault(); this.resignOkAction(); });
     this.resignclbtn.   on("click", (e) => { e.preventDefault(); this.resignCancelAction(); });
     this.forcedbtn.     on("click", (e) => { e.preventDefault(); this.forcedMoveAction(); });
     $(window).          on("resize", (e) => { e.preventDefault(); this.board.redraw(); });
     $(document).        on("keydown", (e) => { this.keyInputAction(e.key); });
+    $(document).        on("contextmenu", (e) => { e.preventDefault(); });
   }
 
   initGameOption() {
@@ -657,6 +658,7 @@ class KifuInputTool {
   }
 
   dragStartAction(event, ui) {
+    this.mouseRbtn = (event.button != 0); //主ボタン(左)のときだけfalse
     this.dragObject = $(event.currentTarget); //dragStopAction()で使うがここで取り出しておかなければならない
     const id = event.currentTarget.id;
     this.dragStartPt = this.board.getDragStartPoint(id, BgUtil.cvtTurnGm2Bd(this.player));
@@ -670,6 +672,7 @@ class KifuInputTool {
 
     if (dragstartpt == dragendpt) {
       //同じ位置にドロップ(＝クリック)したときは、ダイスの目を使ったマスに動かす
+      if (this.mouseRbtn) { this.dicelist.reverse(); }　//右クリックのときは小さい目から使う
       for (let i = 0; i < this.dicelist.length; i++) {
         //ダイス目でピッタリに上がれればその目を使って上げる
         const endptwk = this.dicelist.includes(dragstartpt) ? dragstartpt - this.dicelist[i]
@@ -681,6 +684,7 @@ class KifuInputTool {
           break;
         }
       }
+      if (this.mouseRbtn) { this.dicelist.reverse(); } //元に戻す
     } else {
       if (this.flashflg) {
         //ドロップされた位置が前後 1pt の範囲であれば OK とする。せっかちな操作に対応
@@ -768,6 +772,7 @@ class KifuInputTool {
   }
 
   pointClickAction(event) {
+    this.mouseRbtn = (event.button != 0);
     const id = event.currentTarget.id;
     const pt = parseInt(id.substring(2));
     const chker = this.board.getChequerOnDragging(pt, BgUtil.cvtTurnGm2Bd(this.player));
