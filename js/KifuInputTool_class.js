@@ -658,7 +658,7 @@ class KifuInputTool {
   }
 
   dragStartAction(event, ui) {
-    this.mouseRbtn = (event.button != 0); //主ボタン(左)のときだけfalse
+    this.mouseRbtnFlg = (event.button != 0); //主ボタン(左)のときだけfalse
     this.dragObject = $(event.currentTarget); //dragStopAction()で使うがここで取り出しておかなければならない
     const id = event.currentTarget.id;
     this.dragStartPt = this.board.getDragStartPoint(id, BgUtil.cvtTurnGm2Bd(this.player));
@@ -672,7 +672,7 @@ class KifuInputTool {
 
     if (dragstartpt == dragendpt) {
       //同じ位置にドロップ(＝クリック)したときは、ダイスの目を使ったマスに動かす
-      if (this.mouseRbtn) { this.dicelist.reverse(); }　//右クリックのときは小さい目から使う
+      if (this.mouseRbtnFlg) { this.dicelist.reverse(); }　//右クリックのときは小さい目から使う
       for (let i = 0; i < this.dicelist.length; i++) {
         //ダイス目でピッタリに上がれればその目を使って上げる
         const endptwk = this.dicelist.includes(dragstartpt) ? dragstartpt - this.dicelist[i]
@@ -684,7 +684,7 @@ class KifuInputTool {
           break;
         }
       }
-      if (this.mouseRbtn) { this.dicelist.reverse(); } //元に戻す
+      if (this.mouseRbtnFlg) { this.dicelist.reverse(); } //元に戻す
     } else {
       if (this.flashflg) {
         //ドロップされた位置が前後 1pt の範囲であれば OK とする。せっかちな操作に対応
@@ -772,7 +772,7 @@ class KifuInputTool {
   }
 
   pointClickAction(event) {
-    this.mouseRbtn = (event.button != 0);
+    this.mouseRbtnFlg = (event.button != 0);
     const id = event.currentTarget.id;
     const pt = parseInt(id.substring(2));
     const chker = this.board.getChequerOnDragging(pt, BgUtil.cvtTurnGm2Bd(this.player));
