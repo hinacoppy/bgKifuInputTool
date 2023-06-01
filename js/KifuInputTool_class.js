@@ -3,8 +3,7 @@
 
 class KifuInputTool {
   constructor(gametype = "normal") {
-    this.gametype = gametype;
-    const gameparam = BgUtil.getGametypeParam(this.gametype);
+    const gameparam = BgUtil.getGametypeParam(gametype);
     this.ckrnum = gameparam[1]; //chequer num
     this.param0 = gameparam[0]; //my inner point = point num of one area
     this.param1 = this.param0 * 4 + 1; //array param of XGID position
@@ -12,27 +11,18 @@ class KifuInputTool {
     this.param3 = this.param0 * 4 + 3; //boff2
     this.dicemx = gameparam[2]; //dice pip max
 
-    this.player = false; //true=player1, false=player2
-    this.gamescore = [];
-    this.matchLength = 5;
-    this.score = [0,0,0];
-    this.matchwinflg = false;
-    this.cubeValue = 1; // =2^0
-    this.crawford = false;
     this.xgid = new Xgid(null);
     this.board = new BgBoard("bgKifuInputTool");
-    this.board.resetBoard();
+    this.board.showBoard2(this.xgid);
     this.kifuobj = new BgKifu();
-    this.undoStack = [];
-    this.animDelay = 500;
-    this.gameFinished = true;
-    this.flashflg = true;
-    this.forcedflg = false;
+    this.player = true; //true=player1, false=player2
+    this.animDelay = 500; //cube, dice
+    this.animDelay2 = 200; //checker
 
     this.setDomNames();
     this.setEventHandler();
     this.setChequerDraggable();
-    this.hideAllPanel(); //font awesome が描画するのを待つ必要がある
+    this.hideAllPanel();
     this.panelholder.show();
     this.date.val(this.getToday());
   } //end of constructor()
@@ -47,18 +37,17 @@ class KifuInputTool {
     this.undobtn     = $("#undobtn");
     this.forcedbtn   = $("#forcedbtn");
     this.dancebtn    = $("#dancebtn");
-    this.newgamebtn  = $("#newmatchbtn");
-    this.openingroll = $("#openingroll");
+    this.resignokbtn = $("#resignokbtn");
+    this.resignclbtn = $("#resignclbtn");
     this.gameendnextbtn= $("#gameendnextbtn");
     this.gameendokbtn  = $("#gameendokbtn");
-    this.diceAsBtn     = $("#dice10,#dice11,#dice20,#dice21");
-    this.fliphorizbtn  = $("#fliphorizbtn");
+    this.newgamebtn    = $("#newmatchbtn");
     this.rewindbtn     = $("#rewindbtn");
+    this.fliphorizbtn  = $("#fliphorizbtn");
     this.downloadbtn   = $("#downloadbtn");
-    this.allowillegal  = $("#allowillegal");
+    this.diceAsBtn     = $("#dice10,#dice11,#dice20,#dice21");
     this.pointTriangle = $(".point");
-    this.resignokbtn   = $("#resignokbtn");
-    this.resignclbtn   = $("#resignclbtn");
+    this.allowillegal  = $("#allowillegal");
 
     //infos
     this.site       = $("#site");
@@ -72,6 +61,7 @@ class KifuInputTool {
     this.matchlen   = $("#matchlen");
     this.matchlen2  = $("#matchlen2");
     this.actiondisp = $("#actiondisp");
+    this.openingroll= $("#openingroll");
 
     //panel
     this.panelholder = $("#panelholder");
@@ -109,16 +99,16 @@ class KifuInputTool {
     this.takebtn.       on("click", (e) => { e.preventDefault(); this.takeAction(); });
     this.dropbtn.       on("click", (e) => { e.preventDefault(); this.dropAction(); });
     this.dancebtn.      on("click", (e) => { e.preventDefault(); this.danceAction(); });
-    this.gameendnextbtn.on("click", (e) => { e.preventDefault(); this.gameendNextAction(); });
-    this.gameendokbtn.  on("click", (e) => { e.preventDefault(); this.gameendOkAction(); });
-    this.diceAsBtn.     on("click", (e) => { e.preventDefault(); this.diceAsDoneAction(e); });
+    this.gameendnextbtn.on("click", (e) => { e.preventDefault(); this.gameendAction(true); });
+    this.gameendokbtn.  on("click", (e) => { e.preventDefault(); this.gameendAction(false); });
+    this.diceAsBtn.     on("click", (e) => { e.preventDefault(); this.doneAction(); });
     this.diceAsBtn.     on("contextmenu",  (e) => { e.preventDefault(); this.undoAction(); });
     this.newgamebtn.    on("click", (e) => { e.preventDefault(); this.newGameAction(); });
     this.rewindbtn.     on("click", (e) => { e.preventDefault(); this.rewindAction(); });
     this.fliphorizbtn.  on("click", (e) => { e.preventDefault(); this.flipHorizOrientationAction(); });
     this.downloadbtn.   on("click", (e) => { e.preventDefault(); this.kifuobj.downloadKifuAction(); });
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.changeMatchLengthAction(); });
-    this.allowillegal.  on("change", (e) => { e.preventDefault(); this.flashflg = !this.allowillegal.prop("checked"); });
+    this.allowillegal.  on("change", (e) => { e.preventDefault(); this.strictflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on("click", (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
     this.pointTriangle. on("click contextmenu", (e) => { e.preventDefault(); this.pointClickAction(e); });
     this.resignokbtn.   on("click", (e) => { e.preventDefault(); this.resignOkAction(); });
@@ -130,6 +120,7 @@ class KifuInputTool {
   }
 
   initGameOption() {
+    this.strictflg = !this.allowillegal.prop("checked");
     this.matchLength = this.matchlen.val();
     this.score = [0,0,0];
     this.score1.text(0);
@@ -173,10 +164,10 @@ class KifuInputTool {
     //ムーブ前のボードを再表示
     if (this.undoStack.length == 0) { return; }
     const xgidstr = this.popXgidPosition();
-    this.xgid = new Xgid(xgidstr, this.gametype);
+    this.xgid = new Xgid(xgidstr);
     this.xgid.usabledice = true;
     this.makeDiceList(this.xgid.dice);
-    this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
+    this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.strictflg) );
     this.forcedflg = this.xgid.isForcedMove();
     this.forcedbtn.toggle(this.forcedflg).prop("disabled", this.xgid.moveFinished());
     this.pushXgidPosition(this.xgid.xgidstr);
@@ -185,7 +176,6 @@ class KifuInputTool {
   }
 
   doneAction() {
-    if (this.donebtn.prop("disabled")) { return; }
     if (this.gameFinished) { return; }
     if (this.xgid.isBearoffAll()) {
       this.bearoffAllAction();
@@ -201,7 +191,7 @@ class KifuInputTool {
     this.hideAllPanel();
     this.showRollDoublePanel(this.player);
     this.allowillegal.prop("checked", false);
-    this.flashflg = true;
+    this.strictflg = true;
   }
 
   async doubleAction() {
@@ -252,17 +242,11 @@ class KifuInputTool {
     this.doneAction();
   }
 
-  gameendNextAction() {
+  gameendAction(next) {
     this.hideAllPanel();
     this.showScoreInfo();
     this.kifuobj.pushKifuXgid(""); //空行
-    this.beginNewGame(false);
-  }
-
-  gameendOkAction() {
-    this.hideAllPanel();
-    this.showScoreInfo();
-    this.kifuobj.pushKifuXgid("");
+    if (next) { this.beginNewGame(false); } //まだ続けられるなら
   }
 
   bearoffAllAction() {
@@ -272,11 +256,6 @@ class KifuInputTool {
     this.hideAllPanel();
     this.showGameEndPanel(this.player);
     this.gameFinished = true;
-  }
-
-  diceAsDoneAction(e) {
-    if (BgUtil.cvtTurnGm2Bd(this.player) != e.currentTarget.id.substring(4, 5)) { return; } //ex. id="dice10"
-    this.doneAction();
   }
 
   newGameAction() {
@@ -484,7 +463,7 @@ class KifuInputTool {
   }
 
   showDoneUndoPanel() {
-    this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
+    this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.strictflg) );
     this.forcedflg = this.xgid.isForcedMove(); //rewindAction()時にも呼ばれるため、rollAction()ではなくここで確認
     this.forcedbtn.toggle(this.forcedflg).prop("disabled", this.xgid.moveFinished());
     this.showElement(this.doneundo);
@@ -516,7 +495,7 @@ class KifuInputTool {
     this.showElement(this.gameend);
   }
 
-  showResignPanel(player) {
+  showResignPanel() {
     this.showElement(this.resign);
   }
 
@@ -610,11 +589,11 @@ class KifuInputTool {
       document.body.addEventListener("touchleave", evfn_dragend, false);
       document.body.addEventListener("touchend",   evfn_dragend, false);
 
-      const ui = {position: { //dragStartAction()に渡すオブジェクトを作る
-                   left: dragobj.offsetLeft,
-                   top:  dragobj.offsetTop
-                 }};
-      this.dragStartAction(origevt, ui);
+      const position = { //dragStartAction()に渡すオブジェクトを作る
+              left: dragobj.offsetLeft,
+              top:  dragobj.offsetTop
+            };
+      this.dragStartAction(origevt, position);
     });
 
     //ドラッグ中のコールバック関数
@@ -643,11 +622,11 @@ class KifuInputTool {
       document.body.removeEventListener("touchleave", evfn_dragend, false);
       document.body.removeEventListener("touchend",   evfn_dragend, false);
 
-      const ui = {position: { //dragStopAction()に渡すオブジェクトを作る
-                   left: dragobj.offsetLeft,
-                   top:  dragobj.offsetTop
-                 }};
-      this.dragStopAction(origevt, ui);
+      const position = { //dragStopAction()に渡すオブジェクトを作る
+              left: dragobj.offsetLeft,
+              top:  dragobj.offsetTop
+            };
+      this.dragStopAction(origevt, position);
     });
 
     //dragできるオブジェクトにdragstartイベントを設定
@@ -657,12 +636,12 @@ class KifuInputTool {
     }
   }
 
-  dragStartAction(event, ui) {
+  dragStartAction(event, position) {
     this.mouseRbtnFlg = (event.button != 0); //主ボタン(左)のときだけfalse
     this.dragObject = $(event.currentTarget); //dragStopAction()で使うがここで取り出しておかなければならない
     const id = event.currentTarget.id;
     this.dragStartPt = this.board.getDragStartPoint(id, BgUtil.cvtTurnGm2Bd(this.player));
-    this.dragStartPos = ui.position;
+    this.dragStartPos = position;
     this.flashOnMovablePoint(this.dragStartPt);
   }
 
@@ -686,7 +665,7 @@ class KifuInputTool {
       }
       if (this.mouseRbtnFlg) { this.dicelist.reverse(); } //元に戻す
     } else {
-      if (this.flashflg) {
+      if (this.strictflg) {
         //ドロップされた位置が前後 1pt の範囲であれば OK とする。せっかちな操作に対応
         const ok0 = xg.isMovable(dragstartpt, dragendpt);
         const ok1 = xg.isMovable(dragstartpt, dragendpt + 1);
@@ -700,7 +679,6 @@ class KifuInputTool {
         ok = (dragstartpt > dragendpt) && !this.xgid.isBlocked(dragendpt); //掴んだマスより前でブロックポイントでなければtrue
       }
       //D&Dで動かした後クリックで動かせるようにダイスリストを調整しておく
-      //known bug:ダイス組み合わせの位置に動かしたときは、次のクリックムーブが正しく動かないことがある
       for (let i = 0; i < this.dicelist.length; i++) {
         if (this.dicelist[i] == (dragstartpt - endpt)) {
           this.dicelist.splice(i, 1);
@@ -711,9 +689,9 @@ class KifuInputTool {
     return [endpt, ok];
   }
 
-  dragStopAction(event, ui) {
+  dragStopAction(event, position) {
     this.flashOffMovablePoint();
-    const dragendpt = this.board.getDragEndPoint(ui.position, BgUtil.cvtTurnGm2Bd(this.player));
+    const dragendpt = this.board.getDragEndPoint(position, BgUtil.cvtTurnGm2Bd(this.player));
 
     let ok;
     [this.dragEndPt, ok] = this.checkDragEndPt(this.xgid, this.dragStartPt, dragendpt);
@@ -727,7 +705,7 @@ class KifuInputTool {
         const oppoChequer = this.board.getChequerHitted(this.dragEndPt, oppoplayer);
         const barPt = this.board.getBarPos(oppoplayer);
         if (oppoChequer) {
-          oppoChequer.dom.animate(barPt, 300, () => { this.board.showBoard2(this.xgid); });
+          oppoChequer.dom.animate(barPt, this.animDelay2, () => { this.board.showBoard2(this.xgid); });
         }
       }
       const movestr = this.dragStartPt + "/" + this.dragEndPt;
@@ -736,10 +714,10 @@ class KifuInputTool {
         this.board.showBoard2(this.xgid);
       }
     } else {
-      this.dragObject.animate(this.dragStartPos, 300);
+      this.dragObject.animate(this.dragStartPos, this.animDelay2);
     }
     this.swapChequerDraggable(this.player);
-    this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.flashflg) );
+    this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.strictflg) );
   }
 
   swapChequerDraggable(player, init = false) {
@@ -754,9 +732,9 @@ class KifuInputTool {
   }
 
   flashOnMovablePoint(startpt) {
-    if (!this.flashflg) { return; }
+    if (!this.strictflg) { return; }
     let dest2 = [];
-    const destpt = this.xgid.movablePoint(this.dragStartPt, this.flashflg);
+    const destpt = this.xgid.movablePoint(this.dragStartPt, this.strictflg);
     if (this.player) { dest2 = destpt; }
     else {
       for (const p of destpt) {
@@ -779,13 +757,13 @@ class KifuInputTool {
 
     if (chker) { //chker may be undefined
       const chkerdom = chker.dom;
-      const ui = {position: { //dragStopAction()に渡すオブジェクトを作る
-                   left: parseInt(chkerdom[0].style.left),
-                   top:  parseInt(chkerdom[0].style.top)
-                 }};
+      const position = { //dragStopAction()に渡すオブジェクトを作る
+              left: parseInt(chkerdom[0].style.left),
+              top:  parseInt(chkerdom[0].style.top)
+            };
       this.dragObject = $(chker.id);
-      this.dragStartPt = this.board.getDragEndPoint(ui.position, BgUtil.cvtTurnGm2Bd(this.player));;
-      this.dragStopAction(event, ui);
+      this.dragStartPt = this.board.getDragEndPoint(position, BgUtil.cvtTurnGm2Bd(this.player));;
+      this.dragStopAction(event, position);
     }
   }
 
