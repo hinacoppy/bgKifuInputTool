@@ -39,15 +39,14 @@ class KifuInputTool {
     this.dancebtn    = $("#dancebtn");
     this.resignokbtn = $("#resignokbtn");
     this.resignclbtn = $("#resignclbtn");
-    this.gameendnextbtn= $("#gameendnextbtn");
-    this.gameendokbtn  = $("#gameendokbtn");
-    this.newgamebtn    = $("#newmatchbtn");
-    this.rewindbtn     = $("#rewindbtn");
-    this.fliphorizbtn  = $("#fliphorizbtn");
-    this.downloadbtn   = $("#downloadbtn");
-    this.diceAsBtn     = $("#dice10,#dice11,#dice20,#dice21");
+    this.gameendbtn  = $("#gameendbtn");
+    this.newmatchbtn = $("#newmatchbtn");
+    this.rewindbtn   = $("#rewindbtn");
+    this.fliphorizbtn= $("#fliphorizbtn");
+    this.downloadbtn = $("#downloadbtn");
+    this.diceAsBtn   = $("#dice10,#dice11,#dice20,#dice21");
+    this.allowillegal= $("#allowillegal");
     this.pointTriangle = $(".point");
-    this.allowillegal  = $("#allowillegal");
 
     //infos
     this.site       = $("#site");
@@ -99,18 +98,17 @@ class KifuInputTool {
     this.takebtn.       on("click", (e) => { e.preventDefault(); this.takeAction(); });
     this.dropbtn.       on("click", (e) => { e.preventDefault(); this.dropAction(); });
     this.dancebtn.      on("click", (e) => { e.preventDefault(); this.danceAction(); });
-    this.gameendnextbtn.on("click", (e) => { e.preventDefault(); this.gameendAction(true); });
-    this.gameendokbtn.  on("click", (e) => { e.preventDefault(); this.gameendAction(false); });
+    this.gameendbtn.    on("click", (e) => { e.preventDefault(); this.gameendAction(); });
     this.diceAsBtn.     on("click", (e) => { e.preventDefault(); this.doneAction(); });
     this.diceAsBtn.     on("contextmenu",  (e) => { e.preventDefault(); this.undoAction(); });
-    this.newgamebtn.    on("click", (e) => { e.preventDefault(); this.newGameAction(); });
+    this.newmatchbtn.   on("click", (e) => { e.preventDefault(); this.newGameAction(); });
     this.rewindbtn.     on("click", (e) => { e.preventDefault(); this.rewindAction(); });
     this.fliphorizbtn.  on("click", (e) => { e.preventDefault(); this.flipHorizOrientationAction(); });
     this.downloadbtn.   on("click", (e) => { e.preventDefault(); this.kifuobj.downloadKifuAction(); });
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.changeMatchLengthAction(); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.strictflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on("click", (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
-    this.pointTriangle. on("click contextmenu", (e) => { e.preventDefault(); this.pointClickAction(e); });
+    this.pointTriangle. on("click", (e) => { e.preventDefault(); this.pointClickAction(e); });
     this.resignokbtn.   on("click", (e) => { e.preventDefault(); this.resignOkAction(); });
     this.resignclbtn.   on("click", (e) => { e.preventDefault(); this.resignCancelAction(); });
     this.forcedbtn.     on("click", (e) => { e.preventDefault(); this.forcedMoveAction(); });
@@ -242,11 +240,11 @@ class KifuInputTool {
     this.doneAction();
   }
 
-  gameendAction(next) {
+  gameendAction() {
     this.hideAllPanel();
     this.showScoreInfo();
     this.kifuobj.pushKifuXgid(""); //空行
-    if (next) { this.beginNewGame(false); } //まだ続けられるなら
+    if (!this.matchwinflg) { this.beginNewGame(false); } //まだ続けられるなら
   }
 
   bearoffAllAction() {
@@ -276,7 +274,7 @@ class KifuInputTool {
 
     const dice = getDice(last1xgid);
     if (dice == "00") { //rewind cube action
-      //一つ前の履歴がtakeアクションだったときは、三つ前のダブルオファーのxgidを取り出す
+      //二つ前の履歴がtakeアクションだったときは、三つ前のダブルオファーのxgidを取り出す
       const dummy1 = this.kifuobj.popKifuXgid(); //ignore (dice=xx)
       const dummy2 = this.kifuobj.popKifuXgid(); //ignore (dice=00)
       const doubleofferxgid = this.kifuobj.popKifuXgid(); //double offer xgid (dice=D)
@@ -291,7 +289,7 @@ class KifuInputTool {
         //Doneボタンが押せる状態になっているときは単純なundoActionとして動かすため、pop/pushして履歴を残す
       } else {
         lastxgid = last1xgid;
-        //ダブルオファーの履歴をスキップするため、一つ前のxgidを使う
+        //doubleAction()でpushされるダブルオファーの履歴(dice=D)をスキップするため、一つ前のxgidを使う
         //上記でpopしたlastxgidは捨てる
       }
       this.player = getPlayer(lastxgid);
@@ -318,7 +316,7 @@ class KifuInputTool {
     this.makeDiceList(dice3);
 
     if (this.openingrollflag && dice1 == dice2) { return; } //オープニングロールはゾロ目を選べない
-    this.rolldouble.hide();
+//    this.rolldouble.hide();
     this.rollAction(this.openingrollflag);
   }
 
@@ -490,8 +488,9 @@ class KifuInputTool {
 
   showGameEndPanel(player) {
     this.makeGameEndPanel(player);
-    this.gameendnextbtn.toggle(!this.matchwinflg);
-    this.gameendokbtn.toggle(this.matchwinflg);
+    const btnmsg = this.matchwinflg ? "<i class='fas fa-check-circle'></i> Ok"
+                                    : "<i class='fas fa-arrow-alt-circle-right'></i> Next";
+    this.gameendbtn.html(btnmsg);
     this.showElement(this.gameend);
   }
 
@@ -751,6 +750,9 @@ class KifuInputTool {
 
   pointClickAction(event) {
     this.mouseRbtnFlg = (event.button != 0);
+    //このルーチンに来るのはclickイベント時のみ
+    //contextmenuイベント時のバグが潰せないので、受付けなくしている
+    //なので、ここでthis.mouseRbtnFlgがtrueになることはない
     const id = event.currentTarget.id;
     const pt = parseInt(id.substring(2));
     const chker = this.board.getChequerOnDragging(pt, BgUtil.cvtTurnGm2Bd(this.player));
