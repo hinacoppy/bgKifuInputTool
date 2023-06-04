@@ -108,7 +108,7 @@ class KifuInputTool {
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.changeMatchLengthAction(); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.strictflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on("click", (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
-    this.pointTriangle. on("mousedown", (e) => { e.preventDefault(); this.pointClickAction(e); });
+    this.pointTriangle. on("mouseup", (e) => { e.preventDefault(); this.pointClickAction(e); });
     this.resignokbtn.   on("click", (e) => { e.preventDefault(); this.resignOkAction(); });
     this.resignclbtn.   on("click", (e) => { e.preventDefault(); this.resignCancelAction(); });
     this.forcedbtn.     on("click", (e) => { e.preventDefault(); this.forcedMoveAction(); });
