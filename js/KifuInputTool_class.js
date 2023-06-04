@@ -21,7 +21,7 @@ class KifuInputTool {
 
     this.setDomNames();
     this.setEventHandler();
-    this.setChequerDraggable();
+    this.setDraggableEvent();
     this.hideAllPanel();
     this.panelholder.show();
     this.date.val(this.getToday());
@@ -108,7 +108,7 @@ class KifuInputTool {
     this.matchlen.      on("change", (e) => { e.preventDefault(); this.changeMatchLengthAction(); });
     this.allowillegal.  on("change", (e) => { e.preventDefault(); this.strictflg = !this.allowillegal.prop("checked"); });
     this.pickdice.      on("click", (e) => { e.preventDefault(); this.pickDiceAction(e.currentTarget.id.slice(-2)); });
-    this.pointTriangle. on("click", (e) => { e.preventDefault(); this.pointClickAction(e); });
+    this.pointTriangle. on("mousedown", (e) => { e.preventDefault(); this.pointClickAction(e); });
     this.resignokbtn.   on("click", (e) => { e.preventDefault(); this.resignOkAction(); });
     this.resignclbtn.   on("click", (e) => { e.preventDefault(); this.resignCancelAction(); });
     this.forcedbtn.     on("click", (e) => { e.preventDefault(); this.forcedMoveAction(); });
@@ -130,7 +130,7 @@ class KifuInputTool {
     this.xgid.initialize(initpos, newmatch, this.matchLength);
     this.board.showBoard2(this.xgid);
     this.showPipInfo();
-    this.swapChequerDraggable(true, true);
+    this.unsetChequerDraggable();
     this.openingrollflag = true;
     this.hideAllPanel();
     this.showRollDoublePanel(true, this.openingrollflag);
@@ -151,11 +151,11 @@ class KifuInputTool {
     this.board.showBoard2(this.xgid);
     this.hideAllPanel();
     this.showDoneUndoPanel();
-    await this.board.animateDice(this.animDelay);
-    this.swapChequerDraggable(this.player);
-    this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
+    this.kifuobj.pushKifuXgid(this.xgid.xgidstr);　//棋譜を記録するのはアニメーションの前
     this.clearXgidPosition();
     this.pushXgidPosition(this.xgid.xgidstr);
+    await this.board.animateDice(this.animDelay);
+    this.setChequerDraggable(this.player); //ドラッグできるようにするのはアニメーションの後
   }
 
   undoAction() {
@@ -170,7 +170,7 @@ class KifuInputTool {
     this.forcedbtn.toggle(this.forcedflg).prop("disabled", this.xgid.moveFinished());
     this.pushXgidPosition(this.xgid.xgidstr);
     this.board.showBoard2(this.xgid);
-    this.swapChequerDraggable(this.player);
+    this.setChequerDraggable(this.player);
   }
 
   doneAction() {
@@ -185,7 +185,7 @@ class KifuInputTool {
     this.swapXgTurn();
     this.showPipInfo();
     this.board.showBoard2(this.xgid);
-    this.swapChequerDraggable(true, true);
+    this.unsetChequerDraggable();
     this.hideAllPanel();
     this.showRollDoublePanel(this.player);
     this.allowillegal.prop("checked", false);
@@ -200,11 +200,11 @@ class KifuInputTool {
     this.board.showBoard2(this.xgid); //double offer
     this.hideAllPanel();
     this.showTakeDropPanel();
+    this.kifuobj.pushKifuXgid(this.xgid.xgidstr); //棋譜を記録するのはアニメーションの前
+    this.swapXgTurn(); //XGのturnを変えるのは棋譜用XGID出力後
     this.setButtonEnabled(this.takebtn, false); //アニメーションしているときはTakeボタンは押せない
     await this.board.animateCube(this.animDelay); //キューブを揺すのはshowBoard()の後
     this.setButtonEnabled(this.takebtn, true);
-    this.kifuobj.pushKifuXgid(this.xgid.xgidstr);
-    this.swapXgTurn(); //XGのturnを変えるのは棋譜用XGID出力後
   }
 
   takeAction() {
@@ -316,7 +316,6 @@ class KifuInputTool {
     this.makeDiceList(dice3);
 
     if (this.openingrollflag && dice1 == dice2) { return; } //オープニングロールはゾロ目を選べない
-//    this.rolldouble.hide();
     this.rollAction(this.openingrollflag);
   }
 
@@ -554,7 +553,7 @@ class KifuInputTool {
     return datestr;
   }
 
-  setChequerDraggable() {
+  setDraggableEvent() {
     //関数内広域変数
     var x;//要素内のクリックされた位置
     var y;
@@ -715,13 +714,16 @@ class KifuInputTool {
     } else {
       this.dragObject.animate(this.dragStartPos, this.animDelay2);
     }
-    this.swapChequerDraggable(this.player);
+    this.setChequerDraggable(this.player);
     this.donebtn.prop("disabled", (!this.xgid.moveFinished() && this.strictflg) );
   }
 
-  swapChequerDraggable(player, init = false) {
+  unsetChequerDraggable() {
     this.chequerall.removeClass("draggable");
-    if (init) { return; }
+  }
+
+  setChequerDraggable(player) {
+    this.unsetChequerDraggable();
     const plyr = BgUtil.cvtTurnGm2Bd(player);
     for (let i = 0; i < this.ckrnum; i++) {
       const pt = this.board.chequer[plyr][i].point;
@@ -750,9 +752,6 @@ class KifuInputTool {
 
   pointClickAction(event) {
     this.mouseRbtnFlg = (event.button != 0);
-    //このルーチンに来るのはclickイベント時のみ
-    //contextmenuイベント時のバグが潰せないので、受付けなくしている
-    //なので、ここでthis.mouseRbtnFlgがtrueになることはない
     const id = event.currentTarget.id;
     const pt = parseInt(id.substring(2));
     const chker = this.board.getChequerOnDragging(pt, BgUtil.cvtTurnGm2Bd(this.player));
