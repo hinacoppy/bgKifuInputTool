@@ -267,7 +267,7 @@ class KifuInputTool {
   rewindAction() {
     const last0xgid = this.kifuobj.peepKifuXgid(0);
     const last1xgid = this.kifuobj.peepKifuXgid(1);
-    if (!last1xgid) { return; } //rewindで戻せるのは空行で区切られたゲーム境界まで
+    if (!last0xgid || !last1xgid) { return; } //rewindで戻せるのは空行で区切られたゲーム境界まで
                                 //known bug:オープニングロールの出目は巻き戻せない
     const getDice   = ((xgidstr) => { const s = xgidstr.split(":"); return s[4]; }); //utility function
     const getPlayer = ((xgidstr) => { const s = xgidstr.split(":"); return (s[3] == 1); });
