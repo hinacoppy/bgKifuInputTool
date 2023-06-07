@@ -165,3 +165,12 @@ input{
 .paneltitle{
   font-size:2em;
 }
+
+/* FloatWindow4.css で設定されている設定を上書き */
+.modalContainer{
+  border:initial;
+}
+.modalBody{
+  padding:0;
+  display:none; /* 最初だけ非表示 */
+}

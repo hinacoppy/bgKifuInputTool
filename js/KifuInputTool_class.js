@@ -508,7 +508,6 @@ class KifuInputTool {
     const width = elem.outerWidth(true);
     const height = elem.outerHeight(true);
     this.panelholder.css("width", width).css("height", height+35);
-    $("#panelBody").css("padding", 0);
   }
 
   pushXgidPosition(xgidstr) {
