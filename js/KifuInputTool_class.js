@@ -20,6 +20,7 @@ class KifuInputTool {
     this.animDelay2 = 200; //checker
 
     this.setDomNames();
+    this.makeDicelist();
     this.setEventHandler();
     this.setDraggableEvent();
     this.hideAllPanel();
@@ -75,6 +76,7 @@ class KifuInputTool {
     this.chequerall  = $(".chequer");
     //pick dice
     this.pickdice    = $(".pickdice");
+    this.pickdicetable = $("#pickdicetable");
 
     //モーダルウィンドウを準備
     this.panelWindow = new FloatWindow({
@@ -445,15 +447,15 @@ class KifuInputTool {
     this.openingroll.toggle(openroll);
 
     const closeout = this.isCloseout(player);
-    this.pickdice.toggle(!closeout); //ダイス一覧かpassボタンのどちらかを表示
+    this.pickdicetable.toggle(!closeout); //ダイス一覧かpassボタンのどちらかを表示
     this.dancebtn.toggle(closeout);
 
-    const col1  = openroll ? "blue"  : (player ? "blue" : "white");
-    const col2  = openroll ? "white" : (player ? "blue" : "white");
-    const bgcol = openroll ? "#999"  : (player ? "#ddd" : "#444");
-    $(".turn1").css("color", col1);
-    $(".turn2").css("color", col2);
-    this.rolldouble.css("background-color", bgcol);
+    const col1 = openroll ? "blue"  : (player ? "blue" : "white");
+    const col2 = openroll ? "white" : (player ? "blue" : "white");
+    const col1bg = (col1 == "blue") ? "white" : "black";
+    const col2bg = (col2 == "blue") ? "white" : "black";
+    $(".turn1").css("stroke", col1bg).css("fill", col1);
+    $(".turn2").css("stroke", col2bg).css("fill", col2);
     this.showElement(this.rolldouble);
     this.keyBuffer = "";
     this.panelshowing = "rolldouble";
@@ -765,6 +767,30 @@ class KifuInputTool {
       this.dragStartPt = this.board.getDragEndPoint(position, BgUtil.cvtTurnGm2Bd(this.player));;
       this.dragStopAction(event, position);
     }
+  }
+
+  makeDicelist() {
+    let dicelist = "";
+
+    for (let i = 1; i <= 6; i++) {
+      dicelist += "<tr>\n"
+      for (let j = 1; j <= 6; j++) {
+        const id = "pickdice" + i + "" + j;
+        const cls1 = (i >= j) ? "turn1 " : "turn2 ";
+        const cls2 = (i >  j) ? "turn1 " : "turn2 ";
+        const dice1 = this.board.svgDice[i].replace('class="', 'class="' + cls1);
+        const dice2 = this.board.svgDice[j].replace('class="', 'class="' + cls2);
+
+        dicelist += "<td id='" + id + "' class='pickdice'>\n";
+        dicelist += dice1;
+        dicelist += dice2;
+        dicelist += "</td>\n";
+      }
+      dicelist += "</tr>\n"
+    }
+
+    this.pickdicetable.html(dicelist);
+    this.pickdice = $(".pickdice"); //ここで定義しないと有効にならない
   }
 
 }

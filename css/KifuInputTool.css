@@ -150,20 +150,28 @@ input{
   background-color:var(--bg-color);
 }
 
-.pickdice{
-  font-size:2em;
-  white-space:nowrap;
+#doublebtn{
+  margin-right:1em; /* 右にスペース */
 }
-#openingroll{
-  font-size:2em;
-  color:white;
-}
-.turn1{
-}
-.turn2{
+#dancebtn{
+  display:block; /* 強制改行 */
+  margin-top:1vh; /* 上にスペース */
 }
 .paneltitle{
   font-size:2em;
+}
+.pickdicetable td, th {
+  border:2px solid #bbb;
+}
+.pickdicetable{
+  margin-top:1vh; /* 上にスペース */
+  border-collapse:collapse;
+}
+.pickdice{
+  padding:10px 5px 0px 5px;
+}
+.pickdice svg{
+  width:2em;
 }
 
 /* FloatWindow4.css で設定されている設定を上書き */
