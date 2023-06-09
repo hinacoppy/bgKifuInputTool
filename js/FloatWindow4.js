@@ -86,9 +86,9 @@ class FloatWindow {
 
   getTime() {
     const now = new Date();
-    const hour =("0" + date.getHour()).slice(-2);
-    const min = ("0" + date.getMinutes()).slice(-2);
-    const sec = ("0" + date.getSeconds()).slice(-2);
+    const hour =("0" + now.getHour()).slice(-2);
+    const min = ("0" + now.getMinutes()).slice(-2);
+    const sec = ("0" + now.getSeconds()).slice(-2);
     const timestr = hour + min + sec;
     return timestr;
   }
@@ -106,6 +106,7 @@ $("#pip2").text(this.getTime());
       }
       toucheX = container.offsetLeft - evt.touches[0].pageX;
       toucheY = container.offsetTop  - evt.touches[0].pageY;
+$("#pip1").text(toucheX);
       container.style.opacity = 0.5;
       draggingflg = true; //移動開始
     });
