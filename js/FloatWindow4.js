@@ -97,8 +97,8 @@ class FloatWindow {
     let toucheX, toucheY;
     let draggingflg = false;
 
-    target.addEventListener("touchgstart", (evt) => {
-$("#player2").text(this.getTime());
+    target.addEventListener("touchstart", (evt) => {
+$("#pip2").text(this.getTime());
       evt.preventDefault(); //touchstartの後に発火するマウス関連イベント(mousedown)を抑止する
       if (evt.target === this.closebtn || evt.target === this.maxbtn || evt.target === this.minbtn) {
         evt.target.click(); //preventDefault()でclickイベントが抑止されているため、改めてclickイベントを発火させる
