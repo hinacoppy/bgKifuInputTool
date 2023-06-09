@@ -67,6 +67,7 @@ class FloatWindow {
     let mouseX, mouseY; //どこをつかんで移動を開始したかを保持
 
     container.addEventListener("dragstart", (evt) => {
+$("#pip2").text(this.getTime());
       mouseX = container.offsetLeft - evt.pageX;
       mouseY = container.offsetTop  - evt.pageY;
       container.style.opacity = 0.5;
@@ -86,7 +87,7 @@ class FloatWindow {
 
   getTime() {
     const now = new Date();
-    const hour =("0" + now.getHour()).slice(-2);
+    const hour =("0" + now.getHours()).slice(-2);
     const min = ("0" + now.getMinutes()).slice(-2);
     const sec = ("0" + now.getSeconds()).slice(-2);
     const timestr = hour + min + sec;
