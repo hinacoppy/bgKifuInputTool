@@ -65,6 +65,7 @@ class FloatWindow {
   setDragEvent(container) {
     let mouseX, mouseY; //どこをつかんで移動を開始したかを保持
     let toucheX, toucheY;
+    let draggingflg = false;
 
     container.addEventListener("dragstart", (evt) => {
       mouseX = container.offsetLeft - evt.pageX;
@@ -84,18 +85,26 @@ class FloatWindow {
     });
 
     container.addEventListener("touchgstart", (evt) => {
+      evt.preventDefault(); //touchstartの後に発火するマウス関連イベント(mousedown)を抑止する
+      if (evt.target === this.closebtn || evt.target === this.maxbtn || evt.target === this.minbtn) {
+        evt.target.click(); //preventDefault()でclickイベントが抑止されているため、改めてclickイベントを発火させる
+        return;
+      }
       toucheX = container.offsetLeft - evt.touches[0].pageX;
       toucheY = container.offsetTop  - evt.touches[0].pageY;
       container.style.opacity = 0.5;
+      draggingflg = true; //移動開始
     });
 
     container.addEventListener("touchmove", (evt) => {
+      if (!draggingflg) { return; }
       if (evt.x === 0 && evt.y === 0) { return; }
       container.style.left = (evt.touches[0].pageX + toucheX) + "px";
       container.style.top  = (evt.touches[0].pageY + toucheY) + "px";
     });
 
     container.addEventListener("touchend", (evt) => {
+      draggingflg = false; //移動終了
       evt.preventDefault();
       container.style.opacity = 1;
     });
