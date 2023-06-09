@@ -20,6 +20,7 @@ class FloatWindow {
     this.setFloatWindowStyle(option);
     this.setButtonEvent();
     this.setDragEvent(this.hover);
+    this.setTouchEvent(this.hover, this.head);
   }
 
   setOption(userOption) {
@@ -64,8 +65,6 @@ class FloatWindow {
 
   setDragEvent(container) {
     let mouseX, mouseY; //どこをつかんで移動を開始したかを保持
-    let toucheX, toucheY;
-    let draggingflg = false;
 
     container.addEventListener("dragstart", (evt) => {
       mouseX = container.offsetLeft - evt.pageX;
@@ -83,8 +82,23 @@ class FloatWindow {
       evt.preventDefault(); //以降のイベントを無視する
       container.style.opacity = 1;
     });
+  }
 
-    container.addEventListener("touchgstart", (evt) => {
+  getTime() {
+    const now = new Date();
+    const hour =("0" + date.getHour()).slice(-2);
+    const min = ("0" + date.getMinutes()).slice(-2);
+    const sec = ("0" + date.getSeconds()).slice(-2);
+    const timestr = hour + min + sec;
+    return timestr;
+  }
+
+  setTouchEvent(container, target) {
+    let toucheX, toucheY;
+    let draggingflg = false;
+
+    target.addEventListener("touchgstart", (evt) => {
+$("#player2").text(this.getTime());
       evt.preventDefault(); //touchstartの後に発火するマウス関連イベント(mousedown)を抑止する
       if (evt.target === this.closebtn || evt.target === this.maxbtn || evt.target === this.minbtn) {
         evt.target.click(); //preventDefault()でclickイベントが抑止されているため、改めてclickイベントを発火させる
@@ -96,14 +110,14 @@ class FloatWindow {
       draggingflg = true; //移動開始
     });
 
-    container.addEventListener("touchmove", (evt) => {
+    target.addEventListener("touchmove", (evt) => {
       if (!draggingflg) { return; }
       if (evt.x === 0 && evt.y === 0) { return; }
       container.style.left = (evt.touches[0].pageX + toucheX) + "px";
       container.style.top  = (evt.touches[0].pageY + toucheY) + "px";
     });
 
-    container.addEventListener("touchend", (evt) => {
+    target.addEventListener("touchend", (evt) => {
       draggingflg = false; //移動終了
       evt.preventDefault();
       container.style.opacity = 1;
