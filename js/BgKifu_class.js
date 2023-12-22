@@ -8,9 +8,11 @@ class BgKifu {
 
   clearKifuXgid() {
     this.xgidarray = [];
+    this.kifuDirtyFlg = false;
   }
   pushKifuXgid(xgid) {
     this.xgidarray.push(xgid);
+    this.kifuDirtyFlg = true;
   }
   popKifuXgid() {
     return this.xgidarray.pop();
@@ -20,15 +22,20 @@ class BgKifu {
     return idx < 0 ? null : this.xgidarray[idx];
   }
 
+  isDirty() {
+    return this.kifuDirtyFlg;
+  }
+
   downloadKifuAction() {
     this.setGameOption();
     this.convertKifu();
     this.downloadKifu();
+    this.kifuDirtyFlg = false;
   }
 
   downloadKifu() {
     const kifu = this.kifumat.join('\n') + '\n'; //最後に改行を入れる
-    const xgidlist = this.xgidarray.join('\n') + '\n';
+    const xgidlist = "; " + this.xgidarray.join('\n; ') + '\n';
 //    const blob = new Blob([ kifu ], { "type":"text/plain" }); //production mode
     const blob = new Blob([ kifu, xgidlist ], { "type":"text/plain" }); //debug mode
     const downloadanchor = document.getElementById("downloadkifu");

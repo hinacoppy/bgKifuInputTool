@@ -2,10 +2,10 @@
 'use strict';
 
 class BgBoard {
-  constructor() {
+  constructor(boardid = "#board", bearoffside = false) {
     this.xgidstr = "XGID=--------------------------:0:0:0:00:0:0:0:0:0";
-    this.leftrightFlag = false; //true: Left bearoff, false: Right bearoff
-    this.mainBoard = $('#board'); //need to define before bgBoardConfig()
+    this.leftrightFlag = bearoffside; //true: Left bearoff, false: Right bearoff
+    this.mainBoard = $(boardid); //need to define before bgBoardConfig()
     this.bgBoardConfig();
     this.prepareSvgDice();
     this.setDomNameAndStyle();
