@@ -12,7 +12,7 @@ class KifuInputTool {
     this.dicemx = gameparam[2]; //dice pip max
 
     this.xgid = new Xgid(null);
-    this.board = new BgBoard("bgKifuInputTool");
+    this.board = new BgBoard("#board", false);
     this.board.showBoard2(this.xgid);
     this.kifuobj = new BgKifu();
     this.player = true; //true=player1, false=player2
@@ -259,7 +259,9 @@ class KifuInputTool {
   }
 
   newGameAction() {
-    if (!confirm("Really New Match?")) { return; }
+    if (this.kifuobj.isDirty()) {
+      if (!confirm("Really New Match?")) { return; }
+    }
     this.initGameOption();
     this.kifuobj.clearKifuXgid();
     this.actiondisp.html("");
@@ -567,7 +569,17 @@ class KifuInputTool {
     const evfn_dragstart = ((origevt) => {
       origevt.preventDefault();
       dragobj = origevt.currentTarget; //dragする要素を取得し、広域変数に格納
-      if (!dragobj.classList.contains("draggable")) { return; } //draggableでないオブジェクトは無視
+      if (!dragobj.classList.contains("draggable")) {
+        //相手チェッカーのときはそこにポイントオンする(できるときは)
+        const position = { //オブジェクトの位置
+              left: dragobj.offsetLeft,
+              top:  dragobj.offsetTop
+            };
+        //オブジェクト(チェッカー)の位置からポイント番号を得る
+        const point = this.board.getDragEndPoint(position, 1); //下側プレイヤーから見たポイント番号
+        this.makeBlockPointAction(point); //そこにブロックポイントを作る
+        return;
+      }
 
       dragobj.classList.add("dragging"); //drag中フラグ(クラス追加/削除で制御)
       zidx = dragobj.style.zIndex;
@@ -625,7 +637,7 @@ class KifuInputTool {
               left: dragobj.offsetLeft,
               top:  dragobj.offsetTop
             };
-      this.dragStopAction(origevt, position);
+      this.dragStopAction(position);
     });
 
     //dragできるオブジェクトにdragstartイベントを設定
@@ -688,7 +700,7 @@ class KifuInputTool {
     return [endpt, ok];
   }
 
-  dragStopAction(event, position) {
+  dragStopAction(position) {
     this.flashOffMovablePoint();
     const dragendpt = this.board.getDragEndPoint(position, BgUtil.cvtTurnGm2Bd(this.player));
 
@@ -700,18 +712,10 @@ class KifuInputTool {
       if (hit) {
         const movestr = this.dragEndPt + "/" + this.param1;
         this.xgid = this.xgid.moveChequer2(movestr);
-        const oppoplayer = BgUtil.cvtTurnGm2Bd(!this.player);
-        const oppoChequer = this.board.getChequerHitted(this.dragEndPt, oppoplayer);
-        const barPt = this.board.getBarPos(oppoplayer);
-        if (oppoChequer) {
-          oppoChequer.dom.animate(barPt, this.animDelay2, () => { this.board.showBoard2(this.xgid); });
-        }
       }
       const movestr = this.dragStartPt + "/" + this.dragEndPt;
       this.xgid = this.xgid.moveChequer2(movestr);
-      if (!hit) {
-        this.board.showBoard2(this.xgid);
-      }
+      this.board.showBoard2(this.xgid);
     } else {
       this.dragObject.animate(this.dragStartPos, this.animDelay2);
     }
@@ -757,16 +761,55 @@ class KifuInputTool {
     const pt = parseInt(id.substring(2));
     const chker = this.board.getChequerOnDragging(pt, BgUtil.cvtTurnGm2Bd(this.player));
 
-    if (chker) { //chker may be undefined
-      const chkerdom = chker.dom;
-      const position = { //dragStopAction()に渡すオブジェクトを作る
-              left: parseInt(chkerdom[0].style.left),
-              top:  parseInt(chkerdom[0].style.top)
-            };
-      this.dragObject = $(chker.id);
-      this.dragStartPt = this.board.getDragEndPoint(position, BgUtil.cvtTurnGm2Bd(this.player));;
-      this.dragStopAction(event, position);
+    if (chker) { //そのポイントにチェッカーがあればそれを動かす
+      this.moveCheckerAction(chker);
+    } else { //そのポイントにチェッカーがなければ
+      this.makeBlockPointAction(pt); //そこに向かって動かせる2枚を使ってブロックポイントを作る
     }
+  }
+
+  moveCheckerAction(checker) {
+    const checkerdom = checker.dom;
+    const position = { //dragStopAction()に渡すオブジェクトを作る
+            left: parseInt(checkerdom[0].style.left),
+            top:  parseInt(checkerdom[0].style.top)
+          };
+    this.dragObject = $(checker.id);
+    this.dragStartPt = this.board.getDragEndPoint(position, BgUtil.cvtTurnGm2Bd(this.player));
+    this.dragStopAction(position);
+  }
+
+  makeBlockPointAction(pointto) {
+    if (this.dicelist.length < 2) {
+      return; //使えるダイスが２個以上なければ何もしない
+    }
+
+    this.mouseRbtnFlg = false; //このルーチンではダイスの大きい目から使う(右クリックを無視する)
+    const pointfr1 = this.player ? (pointto + this.dicelist[0]) : (pointto - this.dicelist[0]);
+    const pointfr2 = this.player ? (pointto + this.dicelist[1]) : (pointto - this.dicelist[1]);
+
+    const ptno1  = this.xgid.get_ptno (pointfr1);
+    const ptcol1 = this.xgid.get_ptcol(pointfr1);
+    const ptno2  = this.xgid.get_ptno (pointfr2);
+    const ptcol2 = this.xgid.get_ptcol(pointfr2);
+    const ptno3  = this.xgid.get_ptno (pointto);
+    const ptcol3 = this.xgid.get_ptcol(pointto);
+    const chkrnum = this.dicelist[0] == this.dicelist[1] ? 2 : 1; //ゾロ目のときは元ポイントに2個以上なければならない
+    const ismovablefr = (ptno1 >= chkrnum && ptcol1 == BgUtil.cvtTurnGm2Xg(this.player) &&
+                         ptno2 >= chkrnum && ptcol2 == BgUtil.cvtTurnGm2Xg(this.player)); //動かせるチェッカーがあるかどうか
+    const ismovableto = (ptno3 == 0 || (ptno3 == 1 && ptcol3 == BgUtil.cvtTurnGm2Xg(!this.player))); //空かブロットかどうか
+
+    if (!(ismovablefr && ismovableto)) {
+      return; //動かせるチェッカーが２つない、または、動かし先が空あるいはブロットでなければ何もしない
+    }
+
+    //１つ目のチェッカーを動かす
+    const chker1 = this.board.getChequerOnDragging(pointfr1, BgUtil.cvtTurnGm2Bd(this.player));
+    this.moveCheckerAction(chker1);
+
+    //２つ目のチェッカーを動かす
+    const chker2 = this.board.getChequerOnDragging(pointfr2, BgUtil.cvtTurnGm2Bd(this.player));
+    this.moveCheckerAction(chker2);
   }
 
   makeDicelist() {

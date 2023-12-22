@@ -129,6 +129,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 (2023/05/22) チェッカーではなく、三角形のマスの部分をクリックしてもムーブできるよう機能拡張<br>
 (2023/05/26) フォーストムーブで自動的にチェッカーを動かす<button><i class="fas fa-dragon"></i> Forced</button>ボタンを実装<br>
 (2023/06/01) 右クリックのときはダイスの小さい目を先に使うよう機能拡張<br>
+(2023/12/22) ブロックポイントをワンクリックで作れるよう機能拡張 (the same as Galaxy and Heroes)<br>
 </p>
 
 <h3>◆追加するかもしれない機能</h3>
@@ -158,7 +159,8 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 <script src="/js/fontawesome-inuse.min.js"></script>
 <script>
 function showResignRule() {
-  const msg = `リザイン時のスコア判定ロジック
+  const msg = `\
+リザイン時のスコア判定ロジック
 
 (1)一枚でも上がっていれば、シングル負け
 (2)コンタクトがあれば、バックギャモン負け
