@@ -24,7 +24,8 @@ class KifuInputTool {
     this.setEventHandler();
     this.setDraggableEvent();
     this.hideAllPanel();
-    this.panelholder.show();
+    this.panelWindow.min(); // 最小化状態で表示
+    this.panelNavWindow.max(); // 最大化状態で表示
     this.date.val(this.getToday());
   } //end of constructor()
 
@@ -59,6 +60,7 @@ class KifuInputTool {
     this.pip1       = $("#pip1");
     this.pip2       = $("#pip2");
     this.matchlen   = $("#matchlen");
+    this.matchlen1  = $("#matchlen1");
     this.matchlen2  = $("#matchlen2");
     this.actiondisp = $("#actiondisp");
     this.openingroll= $("#openingroll");
@@ -87,7 +89,22 @@ class KifuInputTool {
       minbtn:   "#minBtn",
       closebtn: "#closeBtn",
       width:    "auto",
-      height:   "35px"
+      height:   "35px",
+      initshow: true,
+    });
+
+    this.panelNavWindow = new FloatWindow({
+      hoverid:  "#panelNavHolder",
+      headid:   "#panelNavHeader",
+      bodyid:   "#panelNavBody",
+      maxbtn:   "#maxNavBtn",
+      minbtn:   "#minNavBtn",
+      closebtn: "#closeNavBtn",
+      width:    "auto",
+      height:   "auto",
+      top:      30,
+      left:     window.innerWidth * 0.5,
+      initshow: true,
     });
   }
 
@@ -114,7 +131,7 @@ class KifuInputTool {
     this.resignokbtn.   on("click", (e) => { e.preventDefault(); this.resignOkAction(); });
     this.resignclbtn.   on("click", (e) => { e.preventDefault(); this.resignCancelAction(); });
     this.forcedbtn.     on("click", (e) => { e.preventDefault(); this.forcedMoveAction(); });
-    $(window).          on("resize", (e) => { e.preventDefault(); this.board.redraw(); });
+    $(window).          on("resize", (e) => { e.preventDefault(); this.board.redraw(true); });
     $(document).        on("keydown", (e) => { this.keyInputAction(e.key); });
     $(document).        on("contextmenu", (e) => { e.preventDefault(); });
   }
@@ -398,7 +415,9 @@ class KifuInputTool {
 
   changeMatchLengthAction() {
     this.matchLength = this.matchlen.val();
-    this.matchlen2.text(this.matchLength);
+    const matchlenstr = this.matchLength == 0 ? "$" : this.matchLength;
+    this.matchlen1.text(matchlenstr);
+    this.matchlen2.text(matchlenstr);
     this.xgid.matchsc = this.matchLength;
   }
 
@@ -484,7 +503,8 @@ class KifuInputTool {
     this.showActionStr(player, mes2);
     this.gameend.children(".mes2").text(mes2);
 
-    const mes3 = this.score[1] + " - " + this.score[2] + " (" +this.matchLength + "pt)";
+    const matchlengthinfo = this.matchLength == 0 ? "unlimited game" : this.matchLength + "pt";
+    const mes3 = this.score[1] + " - " + this.score[2] + " (" + matchlengthinfo + ")";
     this.showActionStr(player, mes3);
     this.gameend.children(".mes3").html(mes3);
   }

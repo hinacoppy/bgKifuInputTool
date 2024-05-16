@@ -145,7 +145,8 @@ class BgKifu {
     const getscr = Math.max(delta1, delta2);
     const winner = (delta1 > delta2) ? 1 : -1;
     const winnerscr = (winner == 1) ? xglast.get_sc_me() : xglast.get_sc_yu();
-    const action = (winnerscr < xglast.matchsc) ? ' Wins ' + getscr + ' point' : ' Wins ' + winnerscr + ' point and the match';
+    const action = (xglast.matchsc == 0 || winnerscr < xglast.matchsc) ? ' Wins ' + getscr + ' point'
+                                                                       : ' Wins ' + winnerscr + ' point and the match';
     return action;
   }
 
@@ -392,7 +393,9 @@ class BgKifu {
     this.kifumat.push('; [Crawford "On"]');
     this.kifumat.push('; [CubeLimit "1024"]');
     this.kifumat.push('');
-    this.kifumat.push(this.matchlen + ' point match');
+    const matchlengthinfo = this.matchlen == 0 ? 'unlimited game' : this.matchlen + ' point match';
+    //★実際のunlimitedのMATファイルを確認すること★
+    this.kifumat.push(matchlengthinfo);
     this.kifumat.push('');
   }
 

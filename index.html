@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="description" content="Backgammon Kifu Input Tool">
-<meta name="author" content="(C)hinacoppy 2023">
+<meta name="author" content="(C)hinacoppy 2023-2024">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="/css/bgBoard.css">
 <link rel="stylesheet" href="/css/FloatWindow4.css">
@@ -15,13 +15,13 @@
 </head>
 
 <body class="container">
-<header class="header">Backgammon Kifu Input Tool</header>
 
 <section class="mainarea">
+<header class="header">Backgammon Kifu Input Tool</header>
 <div class="info">
 <span class="playername"><input id="player2" type="text" value="TopSidePlayer"></span>
 <span id="pip2" class="pip">0</span>
-<span class="score"><span id="score2">0</span> / <input id="matchlen" type="number" value="5" min="1" max="99"></span>
+<span class="score"><span id="score2">0</span> / <span id="matchlen1">5</span></span>
 </div>
 
 <div id="board" class="board boardStyle1"></div>
@@ -33,11 +33,18 @@
 </div>
 </section>
 
-<nav class="nav">
-<p id="actiondisp" class="infodisp">&nbsp;</p>
-<table>
+<nav id="panelNavHolder" class="modalContainer" draggable="true">
+  <div id="panelNavHeader" class="modalTitle">
+    <span class="modalTitleText">Navigation Panel</span>
+    <button id="maxNavBtn">O</button>
+    <button id="minNavBtn">_</button>
+    <button id="closeNavBtn" style="display:none;">X</button>
+  </div>
+<table id="panelNavBody" class="nav modalBody">
+<tr><td colspan="2"><p id="actiondisp" class="infodisp">&nbsp;</p></td></tr>
 <tr><td>Site:</td><td><input id="site" type="text" value="input event name"></td></tr>
 <tr><td>Date:</td><td><input id="date" type="text" value="2023/05/09"></td></tr>
+<tr><td>MatchLength:</td><td><input id="matchlen" type="number" value="5" min="0" max="25"> (0=unlimited)</td></tr>
 <tr><td><input id="allowillegal" type="checkbox"></td><td><label for="allowillegal">Allow input of illegal moves</label></td></tr>
 <tr><td colspan="2"><button id="newmatchbtn" class="navbutton"><i class="fas fa-check"></i> Begin New Match</button></td></tr>
 <tr><td colspan="2"><button id="rewindbtn" class="navbutton"><i class="fas fa-angle-double-left"></i> Rewind Action</button></td></tr>
@@ -99,7 +106,7 @@
 
 
 <script src="/js/fontawesome-inuse.min.js" defer></script>
-<script src="/js/jquery-3.6.1.min.js"></script>
+<script src="/js/jquery-3.7.1.min.js"></script>
 <script src="/js/FloatWindow4.js"></script>
 <script src="/js/BgUtil_class.js"></script>
 <script src="/js/BgXgid_class.js"></script>

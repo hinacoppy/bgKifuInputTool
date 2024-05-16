@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="author" content="(C)hinacoppy 2023">
+<meta name="author" content="(C)hinacoppy 2023-2024">
 <link rel="icon" href="icon/favicon.ico">
 <link rel="apple-touch-icon" href="icon/apple-touch-icon.png">
 <style>
@@ -43,6 +43,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 <p class="contents">
 ・対戦者の名前、マッチポイント数、イベント名、イベント日を入力します。<br>
 　→これらの情報は棋譜ファイルにコメントとして記述されます。<br>
+　→マッチポイント数を 0 にすると Unlimited game になります。<br>
 ・<button><i class="fas fa-check"></i> Begin New Match</button>を押下し、棋譜入力を始めます。<br>
 ・[Action Panel] はドラッグで動かすことができます。使いやすい場所に移動してください。<br>
 </p>
@@ -75,7 +76,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 　→本当にリザインするかどうかを<button><i class="fas fa-check-circle"></i> OK</button><button><i class="fas fa-times"></i> Cancel</button>で決定します。<br>
 　→<button><i class="fas fa-check-circle"></i> OK</button>を押下するとゲーム終了です。<br>
 　→得点は自動的に計算されます。<br>
-　→シングル、ギャモン、バックギャモンの判定は<span onclick="showResignRule();" style="color:#00f">単純なロジック</span>で実装しています。<br>
+　→シングル、ギャモン、バックギャモンの判定は<span onclick="showResignRule();" style="color:#00f; cursor:pointer">単純なロジック</span>で実装しています。<br>
 </p>
 <h4>(5) イリーガルムーブ</h4>
 <p class="contents">
@@ -115,7 +116,6 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 <h3>◆分かっている（仕様という名の）問題点</h3>
 
 <p class="contents">
-・入力できるゲームはマッチゲームだけ<br>
 ・出力した棋譜ファイルを GnuBG で読み込んだとき、上側プレイヤーと下側プレイヤーの位置が入れ替わる<br>
 </p>
 
@@ -130,12 +130,14 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 (2023/05/26) フォーストムーブで自動的にチェッカーを動かす<button><i class="fas fa-dragon"></i> Forced</button>ボタンを実装<br>
 (2023/06/01) 右クリックのときはダイスの小さい目を先に使うよう機能拡張<br>
 (2023/12/22) ブロックポイントをワンクリックで作れるよう機能拡張 (the same as Galaxy and Heroes)<br>
+(2024/04/26) Unlimited game に対応<br>
+(2024/05/16) 画面レイアウトを大幅変更。同じ画面に動画を表示したときの棋譜入力の操作性向上を目的として<br>
 </p>
 
 <h3>◆追加するかもしれない機能</h3>
 
 <p class="contents">
-・リザイン時に得点を選択できる機能(<span onclick="showRuleDiff();" style="color:#00f">実ゲームとのルール齟齬</span>のためニーズ調査中)<br>
+・リザイン時に得点を選択できる機能(<span onclick="showRuleDiff();" style="color:#00f; cursor:pointer">実ゲームとのルール齟齬</span>のためニーズ調査中)<br>
 ・And more...&emsp; Suggest new features, Please.<br>
 </p>
 
@@ -144,6 +146,7 @@ MAT形式の棋譜ファイルは XG や GnuBG で読み込むことができま
 <p class="contents">
 ・犬さんからはツール開発のヒントをいただきました。<br>
 ・othelloさんからは機能拡張提案やバグ出しに多大なご支援・ご協力をいただきました。<br>
+・shiraさんからは動画とアプリ画面の同時表示時の操作性についてのサジェスチョンをいただきました。<br>
 ・And All Users and Friends.<br>
 </p>
 

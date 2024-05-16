@@ -1,6 +1,6 @@
 /**
   KifuInputTool.css
-  designed by hinacoppy 2023
+  designed by hinacoppy 2023-2024
 */
 
 /* document outline ----------------------------------------- */
@@ -24,26 +24,17 @@ input{
 }
 
 .container{
-  background:#efe;
-  display:grid; /* Grid Layout でコンテンツを配置 */
-  grid-template-columns:70vw auto;
-  grid-template-rows:auto auto; /*max-content auto;*/
-  grid-template-areas:
-     'header header'
-     'board  nav';
-  position:relative;
+  background-color:#efe;
 }
 
 .header{
-  grid-area:header;
   text-align:center;
   font-size:2vw;
   font-weight:bold;
 }
 
 .mainarea{
-  grid-area:board;
-  margin:1vh auto; /* 上寄せ、左右中央配置 */
+  padding-left:3vw;
 }
 
 .mainareaflex{
@@ -52,34 +43,40 @@ input{
 }
 
 .nav{
-  grid-area:nav;
+  background-color:#efe;
+  border:1px solid;
 }
 
 /* Constant definision for bgBoard.css ------------------------------ */
 :root{
-  --boardHeightNum:70;
-  --boardWidthNum:45;
-  --pointWidthNum:3;
-  --cubeSizeNum:2.7;
+  --boardWidthNum:90; /* < 100 and 15*n */
+  --boardHeightNum:68; /* = boardWidthNum * 3/4 */
+  --pointWidthNum:6; /* = boardWidthNum / 15 */
+  --cubeSizeNum:5.4; /* = pointWidthum * 0.9 */
   --frameSizeNum:1.3;
   --offtrayMarginNum:5;
-  --offtrayHeightNum:70; /* bgBoardApp=49, other=boardHeightNum */
-  --cubeFontSizeNum:2;
-  --labelFontSizeNum:0.8;
-  --stackFontSizeNum:1.5;
-}
+  --offtrayHeightNum:68; /* = boardHeightNum */
+  --cubeFontSizeNum:4;
+  --labelFontSizeNum:1.5;
+  --stackFontSizeNum:3;
 
-
-.pagetitle{
-  font-weight:bold;
-  font-size:120%;
-  padding-top:0.5vh;
-  margin-bottom:1vh;
+  --board-width:calc(var(--boardWidthNum) * 1vmin);
+  --board-height-max:calc(var(--boardHeightNum) * 1vmin);
+  --board-height:calc(var(--boardHeightNum) * 1vmin);
+  --point-height:calc(var(--boardHeightNum) * 1vmin / 2.3);
+  --point-width:calc(var(--pointWidthNum) * 1vmin);
+  --board-frame-size:calc(var(--frameSizeNum) * 1vmin);
+  --offtray-margin:calc(var(--offtrayMarginNum) * 1px);
+  --offtray-height:calc(var(--offtrayHeightNum) * 1vmin);
+  --cube-size:calc(var(--cubeSizeNum) * 1vmin);
+  --cube-font-size:calc(var(--cubeFontSizeNum) * 1vmin);
+  --label-font-size:calc(var(--labelFontSizeNum) * 1vmin);
+  --stack-font-size:calc(var(--stackFontSizeNum) * 1vmin);
 }
 
 .info{
   display:table;
-  width:100%;
+  width:var(--board-width);
 }
 .playername{
   display:table-cell;
@@ -97,10 +94,9 @@ input{
   width:33%;
 }
 
-.infodisp{
-  margin-bottom:1vh;
+.infodisp{ /* 棋譜表示エリア */
   height:14vh;
-  width:24vw;
+  width:100%;
   border:1px solid;
   overflow-y:scroll;
   white-space:nowrap;
@@ -138,8 +134,8 @@ input{
   border:3px solid var(--fg-color);
   background-color:var(--bg-color);
   border-radius:20px;
-  padding:2vh 1.5vw;
-  font-size:150%;
+  padding:1vmin 2vmin;
+  font-size:3vmin;
   white-space:nowrap;
 }
 .oparationbtn:disabled{
@@ -168,10 +164,10 @@ input{
   border-collapse:collapse;
 }
 .pickdice{
-  padding:10px 5px 0px 5px;
+  padding:0.3vmin 0.3vmin 0vmin 0.3vmin;
 }
 .pickdice svg{
-  width:2em;
+  width:3vmin;
 }
 
 /* FloatWindow4.css で設定されている設定を上書き */
@@ -180,5 +176,4 @@ input{
 }
 .modalBody{
   padding:0;
-  display:none; /* 最初だけ非表示 */
 }
