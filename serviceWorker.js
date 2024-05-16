@@ -2,7 +2,7 @@
 // (参考) https://developer.mozilla.org/ja/docs/Web/Progressive_web_apps/Offline_Service_workers
 'use strict';
 
-const cacheName = 'bgKifuInputTool-v20230530';
+const cacheName = 'bgKifuInputTool-v20240516';
 const ORIGIN = (location.hostname == 'localhost') ? '' : location.protocol + '//' + location.hostname;
 
 const contentToCache = [
@@ -21,10 +21,10 @@ const contentToCache = [
   ORIGIN + '/bgKifuInputTool/js/BgKfInputBoard_class.js',
   ORIGIN + '/css/font-awesome-animation.min.css',
   ORIGIN + '/css/bgBoard.css',
-  ORIGIN + '/css/FloatWindow2.css',
+  ORIGIN + '/css/FloatWindow4.css',
   ORIGIN + '/js/fontawesome-inuse.min.js',
-  ORIGIN + '/js/jquery-3.6.1.min.js',
-  ORIGIN + '/js/FloatWindow3.js',
+  ORIGIN + '/js/jquery-3.7.1.min.js',
+  ORIGIN + '/js/FloatWindow4.js',
   ORIGIN + '/js/BgChequer_class.js',
   ORIGIN + '/js/BgXgid_class.js',
   ORIGIN + '/js/BgUtil_class.js',
