@@ -37,13 +37,16 @@ self.addEventListener('install', (e) => {
       return cache.addAll(contentToCache);
     })
   );
+  self.skipWaiting();
 });
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((r) => {
       return r || fetch(e.request).then((response) => {
         return caches.open(cacheName).then((cache) => {
-          cache.put(e.request, response.clone());
+          if (e.request.url.startsWith('http')) { //ignore chrome-extention: request (refuse error msg)
+            cache.put(e.request, response.clone());
+          }
           return response;
         });
       });
