@@ -272,8 +272,9 @@ class BgKifu {
           frlist.push([p, true]);
         }
       }
-      if (af > bf) { //駒が増えていれば
-        for (let i = 0; i < (af-bf); i++) {
+      const bff = (bf < 0) ? 0 : bf; //相手駒は数えないで、
+      if (af > bff) { //駒が増えていれば
+        for (let i = 0; i < (af-bff); i++) {
           tolist.push([p, true]);
         }
         if (bf < 0) {  //元々そこに相手駒があれば
